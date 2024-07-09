@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .light {
+    --primary: 255, 255, 255;
+    --secondary: 248, 249, 250;
+    --text-primary: 0, 0, 0;
+    --text-secondary: 40, 40, 40;
+    --blue-1: 0, 86, 179;
+    --blue-2: 0, 120, 212;
+    --black-1: 0, 0, 0;
+    --black-2: 40, 40, 40;
+    --black-3: 30, 30, 30;
+    --black-4: 70, 70, 70;
+    --black-5: 113, 113, 122;
+    --white-1: 255, 255, 255;
+    --white-2: 248, 249, 250;
+  }
+
+  .dark {
+    --primary: 40, 40, 40;
+    --secondary: 30, 30, 30;
+    --text-primary: 255, 255, 255;
+    --text-secondary: 248, 249, 250;
+    --blue-1: 0, 86, 179;
+    --blue-2: 0, 120, 212;
+    --black-1: 0, 0, 0;
+    --black-2: 40, 40, 40;
+    --black-3: 30, 30, 30;
+    --black-4: 70, 70, 70;
+    --white-1: 255, 255, 255;
+    --white-2: 248, 249, 250;
+  }
+}
