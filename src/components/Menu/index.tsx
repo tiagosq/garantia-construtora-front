@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaAngleLeft, FaAngleRight, FaBriefcase, FaRegCheckCircle, FaRegUserCircle } from "react-icons/fa";
-import { FaGear } from "react-icons/fa6";
+import { FaClipboardUser, FaGear } from "react-icons/fa6";
 import { MdAccessTime, MdAutoAwesomeMosaic, MdExitToApp } from "react-icons/md";
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { Link, Outlet } from "react-router-dom";
@@ -14,61 +14,61 @@ function Menu() {
         <ul className="flex flex-col gap-4 text-primary relative-z-20">
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/dashboard" className="flex gap-4 items-center justify-start">
-              <MdAutoAwesomeMosaic className="text-3xl" />
-              {isOpen && <span className="text-xl">Início</span>}
+              <MdAutoAwesomeMosaic className="text-2xl" />
+              {isOpen && <span className="text-lg">Início</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/maintenance" className="flex gap-4 items-center justify-start">
-              <FaRegCheckCircle className="text-3xl" />
-              {isOpen && <span className="text-xl">Manutenções</span>}
+              <FaRegCheckCircle className="text-2xl" />
+              {isOpen && <span className="text-lg">Manutenções</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/buildings" className="flex gap-4 items-center justify-start">
-              <PiBuildingApartmentFill className="text-3xl" />
-              {isOpen && <span className="text-xl">Empreendimentos</span>}
+              <PiBuildingApartmentFill className="text-2xl" />
+              {isOpen && <span className="text-lg">Empreendimentos</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/business" className="flex gap-4 items-center justify-start">
-              <FaBriefcase className="text-3xl" />
-              {isOpen && <span className="text-xl">Empresa</span>}
+              <FaBriefcase className="text-2xl" />
+              {isOpen && <span className="text-lg">Empresa</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/users" className="flex gap-4 items-center justify-start">
-              <FaRegUserCircle className="text-3xl" />
-              {isOpen && <span className="text-xl">Usuários</span>}
+              <FaRegUserCircle className="text-2xl" />
+              {isOpen && <span className="text-lg">Usuários</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/roles" className="flex gap-4 items-center justify-start">
-              <FaRegUserCircle className="text-3xl" />
-              {isOpen && <span className="text-xl">Funções</span>}
+              <FaClipboardUser className="text-2xl" />
+              {isOpen && <span className="text-lg">Funções</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/users" className="flex gap-4 items-center justify-start">
-              <MdAccessTime className="text-3xl" />
-              {isOpen && <span className="text-xl">Histórico</span>}
+              <MdAccessTime className="text-2xl" />
+              {isOpen && <span className="text-lg">Histórico</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/settings" className="flex gap-4 items-center justify-start">
-              <FaGear className="text-3xl" />
-              {isOpen && <span className="text-xl">Configurações</span>}
+              <FaGear className="text-2xl" />
+              {isOpen && <span className="text-lg">Configurações</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/logout" className="flex gap-4 items-center justify-start">
-              <MdExitToApp className="text-3xl" />
-              {isOpen && <span className="text-xl">Sair</span>}
+              <MdExitToApp className="text-2xl" />
+              {isOpen && <span className="text-lg">Sair</span>}
             </Link>
           </li>
         </ul>
         <div
-          className="absolute bottom-10 -right-11 z-10 text-primary text-3xl bg-blue-2 p-2 rounded-tr-md rounded-br-md"
+          className="absolute bottom-10 -right-10 z-10 text-primary text-2xl bg-blue-2 p-2 rounded-tr-md rounded-br-md"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <FaAngleLeft /> : <FaAngleRight />}
