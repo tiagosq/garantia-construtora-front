@@ -6,6 +6,7 @@ import Menu from './components/Menu'
 import Dashboard from './pages/Dashboard'
 import NotFound from './pages/NotFound'
 import Logs from './pages/Logs'
+import Logout from './pages/Logout'
 
 function AppRouter() {
   return (
@@ -18,6 +19,7 @@ function AppRouter() {
       <Route element={<Menu />}>
         <Route path="/dashboard" index element={<Dashboard />} />
         <Route path="/logs" element={<Logs />} />
+        <Route path="/logout" element={<Logout />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

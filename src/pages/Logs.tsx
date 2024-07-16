@@ -5,6 +5,7 @@ import Button from "../components/Button";
 import { IoSearchOutline } from "react-icons/io5";
 import { FaFileCsv, FaRegEdit, FaRegFile, FaRegTrashAlt } from "react-icons/fa";
 import Table from "../components/Table";
+import Swal from "sweetalert2";
 
 function Logs() {
   const [form, setForm] = useState<{ email: string; startDate: string; endDate: string; }>({ email: '', startDate: '', endDate: '' });
@@ -13,7 +14,29 @@ function Logs() {
     <div className="inline-flex gap-2 items-center">
       <FaRegFile />
       <FaRegEdit />
-      <FaRegTrashAlt className="text-red-600" />
+      <FaRegTrashAlt 
+        className="text-red-600" 
+        onClick={
+          () => Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Esta ação não poderá ser desfeita!', 
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#CC3333',
+            cancelButtonColor: '#333',
+            confirmButtonText: 'Excluir',
+            cancelButtonText: 'Cancelar',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: 'Excluído!',
+                text: 'O registro foi excluído.',
+                icon: 'success',
+              });
+            }
+          })
+        } 
+      />
     </div>
   );
 

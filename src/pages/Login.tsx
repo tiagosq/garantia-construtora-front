@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Input from "../components/Input"
 import Label from "../components/Label"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import Checkbox from "../components/Checkbox";
 import bg from '../assets/bg.webp';
+import cookie from 'react-cookies';
 
 function Login() {
   const [form, setForm] = useState({
@@ -26,6 +27,16 @@ function Login() {
     // ! Implementar lógica de autenticação
     e.preventDefault();
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = cookie.load('GC_JWT_AUTH');
+    // Adicionar uma requisição aqui.
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   return (
     <div className="w-screen h-screen flex justify-end items-stretch bg-secondary bg-cover"

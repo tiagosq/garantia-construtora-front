@@ -1,19 +1,28 @@
 import { useLocalStorage } from "@uidotdev/usehooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaAngleLeft, FaAngleRight, FaBriefcase, FaRegCheckCircle, FaRegMoon, FaRegUserCircle } from "react-icons/fa";
 import { FaClipboardUser, FaGear } from "react-icons/fa6";
 import { MdAccessTime, MdAutoAwesomeMosaic, MdExitToApp, MdOutlineWbSunny } from "react-icons/md";
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import cookie from "react-cookies";
 
 function Menu() {
   const [isOpen, setIsOpen] = useState(true);
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'dark');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = cookie.load('GC_JWT_AUTH');
+    // Adicionar uma requisição aqui.
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   return (
-    <div className="w-full min-h-screen flex justify-between items-stretch">
-      <nav className="min-h-full bg-blue-1 flex flex-col px-6 py-24 relative">
+    <div className="w-full min-h-screen flex justify-between items-stretch relative">
+      <nav className="min-h-full bg-blue-1 flex flex-col px-6 py-24 lg:relative fixed">
         <ul className="flex flex-col gap-4 text-primary dark:text-typo-primary relative-z-20">
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/dashboard" className="flex gap-4 items-center justify-start">
@@ -77,7 +86,7 @@ function Menu() {
           {isOpen ? <FaAngleLeft /> : <FaAngleRight />}
         </div>
       </nav>
-      <div className="flex flex-col w-full min-h-full grow bg-secondary p-10">
+      <div className="flex flex-col w-full min-h-full grow bg-secondary pl-24 p-4 lg:p-10">
         <div className="w-full flex justify-end">
           <div
             className="text-blue-2 text-xl cursor-pointer p-2 hover:pt-0 hover:pb-4 transition-all duration-150"

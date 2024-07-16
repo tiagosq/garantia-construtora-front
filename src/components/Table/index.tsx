@@ -22,60 +22,62 @@ function Table({ headers, data }: IProps) {
     <div className="w-full">
       {data.length > 0 ? (
       <div className="w-full flex flex-col justify-end items-end gap-4">
-        <table className="w-full">
-          <thead className="bg-blue-2">
-            {headers.map((header) => (
-              <th
-                key={header.column}
-                className="!text-gray-50 font-bold text-sm text-left py-2 px-4 cursor-pointer"
-                onClick={() => {
-                  if (sort.column === header.column) {
-                    setSort({
-                      column: header.column,
-                      order: sort.order === 'asc' ? 'desc' : 'asc'
-                    });
-                  } else {
-                    setSort({
-                      column: header.column,
-                      order: 'asc'
-                    });
-                  }
-                }}
-              >
-                {header.name}
-                {header.sortable && (
-                  <>
-                    {sort.column !== header.column && <FaSort className="inline ml-1" />}
-                    {sort.column === header.column && sort.order === 'asc' && <FaSortUp className="inline ml-1" />}
-                    {sort.column === header.column && sort.order === 'desc' && <FaSortDown className="inline ml-1" />}
-                  </>
-                )}
-              </th>
-            ))}
-          </thead>
-          <tbody>
-            {data.map((item, index) => (
-              <tr key={index} className="even:bg-blue-2 even:bg-opacity-10 dark:bg-primary 
-              hover:bg-opacity-30 hover:bg-blue-2 transition-all duration-150 cursor-pointer hover:font-bold">
-                {headers.map((header) => (
-                  <td
-                    key={`${header.column}-${index}`} 
-                    className={`text-typo-primary text-sm text-left py-2 px-4
-                      ${header.column === 'status' && (item[header.column]?.toString().toLowerCase() === 'ativo' ? '!text-green-600' : '!text-red-600')}`}
-                  >
-                    {item[header.column]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="w-full">
+          <table className="w-full overflow-x-auto" width="100%">
+            <thead className="bg-blue-2">
+              {headers.map((header) => (
+                <th
+                  key={header.column}
+                  className="!text-gray-50 font-bold text-sm text-left py-2 px-4 cursor-pointer"
+                  onClick={() => {
+                    if (sort.column === header.column) {
+                      setSort({
+                        column: header.column,
+                        order: sort.order === 'asc' ? 'desc' : 'asc'
+                      });
+                    } else {
+                      setSort({
+                        column: header.column,
+                        order: 'asc'
+                      });
+                    }
+                  }}
+                >
+                  {header.name}
+                  {header.sortable && (
+                    <>
+                      {sort.column !== header.column && <FaSort className="inline ml-1" />}
+                      {sort.column === header.column && sort.order === 'asc' && <FaSortUp className="inline ml-1" />}
+                      {sort.column === header.column && sort.order === 'desc' && <FaSortDown className="inline ml-1" />}
+                    </>
+                  )}
+                </th>
+              ))}
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr key={index} className="even:bg-blue-2 even:bg-opacity-10 dark:bg-primary 
+                hover:bg-opacity-30 hover:bg-blue-2 transition-all duration-150 cursor-pointer">
+                  {headers.map((header) => (
+                    <td
+                      key={`${header.column}-${index}`} 
+                      className={`text-typo-primary text-sm text-left py-2 px-4
+                        ${header.column === 'status' && (item[header.column]?.toString().toLowerCase() === 'ativo' ? '!text-green-600' : '!text-red-600')}`}
+                    >
+                      {item[header.column]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <div className="flex gap-4 flex-wrap justify-end">
           <div className="flex gap-0.5 justify-center items-center">
             <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tl rounded-bl">
               <FaArrowLeft />
             </div>
-            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1">
+            <div className="cursor-pointer brightness-125 saturate-150 hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1">
               1
             </div>
             <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1">
