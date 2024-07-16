@@ -17,7 +17,7 @@ function Input({
       name={name}
       value={value}
       onChange={onChange}
-      className={`w-full border bg-primary font-normal rounded py-2 px-3 border-gray-400 ${customStyle}`}
+      className={`w-full max-h-10 border bg-primary font-normal rounded py-2 px-3 border-gray-400 ${customStyle}`}
       placeholder={placeholder}
       required={required}
     />

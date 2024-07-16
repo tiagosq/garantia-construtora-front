@@ -6,7 +6,7 @@ type IProps = {
 
 function Label({ text, customStyle = '', children }: IProps) {
   return (
-    <label className={`text-typo-primary text-sm font-bold mb-2 ${customStyle}`}>
+    <label className={`text-typo-primary text-sm font-bold ${customStyle}`}>
       <p className="mb-1">{text}</p>
       {children}
     </label>

@@ -4,6 +4,8 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import Menu from './components/Menu'
 import Dashboard from './pages/Dashboard'
+import NotFound from './pages/NotFound'
+import Logs from './pages/Logs'
 
 function AppRouter() {
   return (
@@ -15,7 +17,9 @@ function AppRouter() {
       <Route path="/reset-password/:hash" element={<ResetPassword />} />
       <Route element={<Menu />}>
         <Route path="/dashboard" index element={<Dashboard />} />
+        <Route path="/logs" element={<Logs />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

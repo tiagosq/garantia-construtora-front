@@ -1,9 +1,9 @@
-import { useSelector } from 'react-redux';
 import './App.css';
 import AppRouter from './AppRouter';
+import { useLocalStorage } from '@uidotdev/usehooks';
 
 function App() {
-  const { theme } = useSelector((state) => state.profile);
+  const [theme] = useLocalStorage<'light' | 'dark'>('theme', 'dark');
   
   return (
     <div className={theme}>
