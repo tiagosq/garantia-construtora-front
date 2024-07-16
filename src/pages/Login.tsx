@@ -70,7 +70,7 @@ function Login() {
               />
             </Label>
           </div>
-          <div className="flex justify-between items-center gap-8 mt-2">
+          <div className="flex justify-between items-start gap-8 mt-4">
             <div className="flex flex-col items-start grow gap-3">
               <Checkbox
                 label="Manter conectado"
@@ -86,7 +86,6 @@ function Login() {
             </div>
             <div className="flex flex-col items-start gap-2">
               <Link to="/forgot-password" className="text-sm text-blue-1 dark:text-typo-primary">Esqueci a senha</Link>
-              <Link to="/register" className="text-sm text-blue-1 dark:text-typo-primary">Ou crie sua conta agora</Link>
             </div>
           </div>
         </form>
