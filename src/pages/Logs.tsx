@@ -3,42 +3,11 @@ import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
 import { IoSearchOutline } from "react-icons/io5";
-import { FaFileCsv, FaRegEdit, FaRegFile, FaRegTrashAlt } from "react-icons/fa";
+import { FaFileCsv } from "react-icons/fa";
 import Table from "../components/Table";
-import Swal from "sweetalert2";
 
 function Logs() {
   const [form, setForm] = useState<{ email: string; startDate: string; endDate: string; }>({ email: '', startDate: '', endDate: '' });
-
-  const actions = (
-    <div className="inline-flex gap-2 items-center">
-      <FaRegFile />
-      <FaRegEdit />
-      <FaRegTrashAlt 
-        className="text-red-600" 
-        onClick={
-          () => Swal.fire({
-            title: 'Tem certeza?',
-            text: 'Esta ação não poderá ser desfeita!', 
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#CC3333',
-            cancelButtonColor: '#333',
-            confirmButtonText: 'Excluir',
-            cancelButtonText: 'Cancelar',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              Swal.fire({
-                title: 'Excluído!',
-                text: 'O registro foi excluído.',
-                icon: 'success',
-              });
-            }
-          })
-        } 
-      />
-    </div>
-  );
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -101,12 +70,11 @@ function Logs() {
             { name: 'Data', column: 'date', sortable: true },
             { name: 'Ação', column: 'action' },
             { name: 'Status', column: 'status' },
-            { name: 'Ações', column: 'actions' },
           ]}
           data={[
-            { user: '1', date: '2', action: '3', status: 'Ativo', actions },
-            { user: '4', date: '5', action: '6', status: 'Ativo', actions },
-            { user: '7', date: '8', action: '9', status: 'Inativo', actions },
+            { user: '1', date: '2', action: '3', status: 'Ativo' },
+            { user: '4', date: '5', action: '6', status: 'Ativo' },
+            { user: '7', date: '8', action: '9', status: 'Inativo' },
           ]}
         />
       </div>

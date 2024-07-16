@@ -80,7 +80,7 @@ function Menu() {
           </li>
         </ul>
         <div
-          className="absolute bottom-10 -right-10 z-10 text-primary text-2xl bg-blue-2 p-2 rounded-tr-md rounded-br-md"
+          className="absolute bottom-10 -right-10 z-10 text-white-1 text-2xl bg-blue-2 p-2 rounded-tr-md rounded-br-md"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <FaAngleLeft /> : <FaAngleRight />}

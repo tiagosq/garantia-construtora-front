@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard'
 import NotFound from './pages/NotFound'
 import Logs from './pages/Logs'
 import Logout from './pages/Logout'
+import FormBuildings from './pages/Forms/FormBuildings'
+import Buildings from './pages/Buildings'
 
 function AppRouter() {
   return (
@@ -18,6 +20,9 @@ function AppRouter() {
       <Route path="/reset-password/:hash" element={<ResetPassword />} />
       <Route element={<Menu />}>
         <Route path="/dashboard" index element={<Dashboard />} />
+        <Route path="/buildings" element={<Buildings />} />
+        <Route path="/buildings/create" element={<FormBuildings />} />
+        <Route path="/buildings/:id/edit" element={<FormBuildings />} />
         <Route path="/logs" element={<Logs />} />
         <Route path="/logout" element={<Logout />} />
       </Route>
