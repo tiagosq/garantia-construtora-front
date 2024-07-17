@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 
 function Business() {
-  const [form, setForm] = useState<{ name: string; }>({ name: '' });
+  const [form, setForm] = useState<{ email: string; }>({ email: '' });
   const navigate = useNavigate();
 
   const actions = (
@@ -49,11 +49,11 @@ function Business() {
     <div className="w-full h-full flex flex-col gap-4">
       <div className="w-full flex flex-wrap justify-start items-end gap-4">
       <h1 className="text-3xl text-blue-1 font-bold">
-        Empresas
+        Usuários
       </h1>
       <Button
         type="button"
-        onClick={() => navigate('/business/create')}
+        onClick={() => navigate('/users/create')}
         customStyle="!px-4 !py-1"
         text={(
           <span className="inline-flex items-center gap-2">
@@ -64,13 +64,13 @@ function Business() {
       </div>
 
       <div className="w-full flex flex-wrap justify-start items-end gap-4">
-        <Label text="Usuário" customStyle="grow md:grow-0 min-w-96">
+        <Label text="E-mail" customStyle="grow md:grow-0 min-w-96">
           <Input
-            type="text"
-            name="Nome da Empresa"
-            placeholder="Nome da Empresa"
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            value={form.name}
+            type="email"
+            name="email"
+            placeholder="email@email.com"
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            value={form.email}
           />
         </Label>
         <Button
@@ -100,15 +100,13 @@ function Business() {
         <Table
           headers={[
             { name: 'Usuário', column: 'user', sortable: true },
-            { name: 'Data', column: 'date', sortable: true },
-            { name: 'Ação', column: 'action' },
+            { name: 'Função', column: 'role' },
+            { name: 'Criado em', column: 'date', sortable: true },
             { name: 'Status', column: 'status' },
             { name: 'Ações', column: 'actions' },
           ]}
           data={[
-            { user: '1', date: '2', action: '3', status: 'Ativo', actions },
-            { user: '4', date: '5', action: '6', status: 'Ativo', actions },
-            { user: '7', date: '8', action: '9', status: 'Inativo', actions },
+            { user: 'Admin', role: 'Administrador', date: '01/01/2021', status: 'Ativo', actions },
           ]}
         />
       </div>

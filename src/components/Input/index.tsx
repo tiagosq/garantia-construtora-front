@@ -6,10 +6,11 @@ type IProps = {
   required?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   customStyle?: string;
+  disabled?: boolean;
 }
 
 function Input({
-  type, name, value, placeholder, required = false, onChange, customStyle = '' }: IProps
+  type, name, value, placeholder, disabled, required = false, onChange, customStyle = '' }: IProps
 ) {
   return (
     <input
@@ -20,6 +21,7 @@ function Input({
       className={`w-full max-h-10 border bg-primary font-normal rounded py-2 px-3 border-gray-400 ${customStyle}`}
       placeholder={placeholder}
       required={required}
+      disabled={disabled}
     />
   )
 }

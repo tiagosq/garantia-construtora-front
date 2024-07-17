@@ -8,7 +8,7 @@ import { FaRegSave } from "react-icons/fa";
 import ErrorList from "../../components/ErrorList";
 import Swal from "sweetalert2";
 
-function FormBuildings() {
+function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [errors, setErrors] = useState<string[]>([]);
   const [form, setForm] = useState({
     name: '',
@@ -71,6 +71,7 @@ function FormBuildings() {
               value={form.name}
               onChange={handleChange}
               placeholder="Nome do Empreendimento"
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -87,6 +88,7 @@ function FormBuildings() {
               onChange={handleChange}
               placeholder="Nome do Responsável"
               required
+              disabled={type === 'view'}              
             />
           </Label>
           <Label
@@ -99,6 +101,7 @@ function FormBuildings() {
               value={form.phone}
               onChange={handleChange}
               placeholder="(00) 00000-0000"
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -114,6 +117,7 @@ function FormBuildings() {
               value={form.address}
               onChange={handleChange}
               placeholder="Endereço"
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -127,6 +131,7 @@ function FormBuildings() {
               value={form.number}
               onChange={handleChange}
               placeholder="0000"
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -140,6 +145,7 @@ function FormBuildings() {
               value={form.cep}
               onChange={handleChange}
               placeholder="00000-000"
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -155,6 +161,7 @@ function FormBuildings() {
               value={form.obs}
               onChange={handleChange}
               placeholder="Complemento"
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -168,6 +175,7 @@ function FormBuildings() {
               value={form.district}
               onChange={handleChange}
               placeholder="Bairro"
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -181,6 +189,7 @@ function FormBuildings() {
               value={form.city}
               onChange={handleChange}
               placeholder="Cidade"
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -192,6 +201,7 @@ function FormBuildings() {
               name="uf"
               value={form.uf}
               onChange={handleChange}
+              disabled={type === 'view'}
               options={[
                 { label: 'AC', value: 'AC'},
                 { label: 'AL', value: 'AL' },
@@ -236,6 +246,7 @@ function FormBuildings() {
               value={form.constructionDate}
               placeholder="00/00/0000"
               onChange={handleChange}
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -249,6 +260,7 @@ function FormBuildings() {
               placeholder="00/00/0000"
               value={form.deliveryDate}
               onChange={handleChange}
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -262,6 +274,7 @@ function FormBuildings() {
               placeholder="00/00/0000"
               value={form.warrantyDate}
               onChange={handleChange}
+              disabled={type === 'view'}
               required
             />
           </Label>
@@ -271,6 +284,7 @@ function FormBuildings() {
             checked={false}
             name="active"
             label="Empreendimento Ativo"
+            disabled={type === 'view'}
             onClick={handleClick}
           />
         </div>
