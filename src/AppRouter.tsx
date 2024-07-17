@@ -59,7 +59,7 @@ function AppRouter() {
         <Route path="/maintenance/:business/:maintenance" element={<Answer />} />
 
         <Route path="/logs" element={<Logs />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Profile />} />
         <Route path="/logout" element={<Logout />} />
       </Route>
       <Route path="*" element={<NotFound />} />
