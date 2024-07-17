@@ -81,8 +81,11 @@ function Profile() {
   ];
 
   return (
-    <div className="h-full w-full p-4 flex flex-col
+    <div className="h-full w-full flex flex-col
       gap-6 bg-secondary">
+      <h1 className="text-3xl text-blue-1 font-bold">
+        Configurações
+      </h1>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col w-full gap-3">
           <Label text="Digite sua nova senha">
