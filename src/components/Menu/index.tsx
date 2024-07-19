@@ -6,6 +6,8 @@ import { MdAccessTime, MdAutoAwesomeMosaic, MdExitToApp, MdOutlineWbSunny } from
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import cookie from "react-cookies";
+import { refreshTokenRequest } from "../../services/authServices";
+import Swal from "sweetalert2";
 
 function Menu() {
   const [isOpen, setIsOpen] = useState(true);
@@ -17,6 +19,20 @@ function Menu() {
     // Adicionar uma requisição aqui.
     if (!token) {
       navigate('/login');
+    } else {
+      refreshTokenRequest(token).then(({ data }) => {
+        cookie.save('GC_JWT_AUTH', data.access_token, { path: '/' });
+      }).catch(() => {
+        Swal.fire({
+          title: 'Sessão expirada',
+          text: 'Sua sessão expirou, por favor, faça login novamente.',
+          icon: 'error',
+        });
+        setTimeout(() => {
+          cookie.remove('GC_JWT_AUTH', { path: '/' });
+          navigate('/login')
+        }, 3000);
+      });
     }
   }, [navigate]);
 

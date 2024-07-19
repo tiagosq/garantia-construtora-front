@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react"
 import Input from "../components/Input"
 import Label from "../components/Label"
-import { Link, useParams, Navigate } from "react-router-dom";
+import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import bg from '../assets/bg.webp';
+import { resetPasswordRequest } from "../services/authServices";
+import Swal from "sweetalert2";
 
 function ResetPassword() {
+  const { hash } = useParams();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     password: '',
     passwordConfirm: '',
@@ -28,6 +32,18 @@ function ResetPassword() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // ! Implementar lógica de autenticação
     e.preventDefault();
+    if (hash) {
+      resetPasswordRequest(form.password, form.passwordConfirm, hash).then(() => {        
+        Swal.fire({
+          title: 'Senha alterada',
+          text: 'Sua senha foi alterada com sucesso.',
+          icon: 'success',
+        });
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+      });
+    }
   };
 
   const passwordStrength = () => {
@@ -82,8 +98,6 @@ function ResetPassword() {
     'Senha forte',
   ];
 
-  const { hash } = useParams();
-
   if(!hash) {
     <Navigate to="/login" />
   }
@@ -121,7 +135,7 @@ function ResetPassword() {
             </Label>
           </div>
           {form.password !== '' && (
-          <div>
+          <div className="mt-1">
             <div className="w-full flex items-center gap-2">
               <span className={`h-1 grow ${strength >= 1 ? bgStrengthColor[strength] : 'bg-gray-50'}`}></span>
               <span className={`h-1 grow ${strength >= 2 ? bgStrengthColor[strength] : 'bg-gray-50'}`}></span>
@@ -137,8 +151,7 @@ function ResetPassword() {
               <Button
                 type="submit"
                 text="Alterar senha"
-                onClick={() => {}}
-                disabled={true}
+                disabled={strength < 3}
               />
             </div>
             <div className="flex flex-col items-start gap-2">

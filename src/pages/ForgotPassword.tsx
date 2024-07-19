@@ -1,11 +1,17 @@
 import { useState } from "react"
 import Input from "../components/Input"
 import Label from "../components/Label"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import bg from '../assets/bg.webp';
+import { forgotPasswordRequest } from "../services/authServices";
 
 function ForgotPassword() {
+  const navigate = useNavigate();
+  const [message, setMessage] = useState({
+    message: '',
+    success: false,
+  });
   const [form, setForm] = useState({
     email: '',
   });
@@ -22,6 +28,24 @@ function ForgotPassword() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // ! Implementar lógica de autenticação
     e.preventDefault();
+    forgotPasswordRequest(form.email).then((success) => {
+      if (success) {
+        setMessage({
+          message: 'E-mail enviado com sucesso. Confira sua caixa de entrada.',
+          success: true,
+        });
+        setTimeout(() => { 
+          setMessage({ message: '', success: false });
+          navigate('/login');
+        }, 5000);
+      } else {
+        setMessage({
+          message: 'Erro ao enviar e-mail.',
+          success: false,
+        });
+        setTimeout(() => setMessage({ message: '', success: false }), 5000);
+      }
+    });
   };
 
   return (
@@ -45,6 +69,11 @@ function ForgotPassword() {
                 onChange={handleChange}
               />
             </Label>
+          </div>
+          <div className="flex items-center">
+            <div className={`text-xs italic ${message.success ? 'text-green-600' : 'text-red-600'}`}>
+              {message.message !== '' && <div className="pt-1">{message.message}</div>}
+            </div>
           </div>
           <div className="flex justify-between items-center gap-8 mt-2">
             <div className="flex flex-col items-start grow gap-3">

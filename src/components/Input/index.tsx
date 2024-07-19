@@ -7,10 +7,11 @@ type IProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   customStyle?: string;
   disabled?: boolean;
+  autoComplete?: string;
 }
 
 function Input({
-  type, name, value, placeholder, disabled, required = false, onChange, customStyle = '' }: IProps
+  type, name, value, placeholder, disabled, required = false, onChange, customStyle = '', autoComplete }: IProps
 ) {
   return (
     <input
@@ -22,6 +23,7 @@ function Input({
       placeholder={placeholder}
       required={required}
       disabled={disabled}
+      autoComplete={autoComplete}
     />
   )
 }

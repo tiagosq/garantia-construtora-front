@@ -60,8 +60,8 @@ function AppRouter() {
 
         <Route path="/logs" element={<Logs />} />
         <Route path="/settings" element={<Profile />} />
-        <Route path="/logout" element={<Logout />} />
       </Route>
+      <Route path="/logout" element={<Logout />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   )

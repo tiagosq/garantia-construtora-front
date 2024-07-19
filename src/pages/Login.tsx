@@ -3,11 +3,13 @@ import Input from "../components/Input"
 import Label from "../components/Label"
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
-import Checkbox from "../components/Checkbox";
 import bg from '../assets/bg.webp';
 import cookie from 'react-cookies';
+import { loginRequest } from "../services/authServices";
 
 function Login() {
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -26,9 +28,22 @@ function Login() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // ! Implementar lógica de autenticação
     e.preventDefault();
+    if (!form.email || !form.password) {
+      alert('Preencha todos os campos');
+      return;
+    } else {
+      setError('');
+      loginRequest(form.email, form.password).then(({ data }) => {
+        if (data?.access_token) {
+          cookie.save('GC_JWT_AUTH', data.access_token);
+          navigate('/dashboard');
+        }
+      }).catch((error) => {
+        setError(error.message);
+        setTimeout(() => setError(''), 5000);
+      });
+    }
   };
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const token = cookie.load('GC_JWT_AUTH');
@@ -57,6 +72,7 @@ function Login() {
                 placeholder="usuario@email.com.br"
                 required
                 onChange={handleChange}
+                autoComplete="username"
               />
             </Label>
             <Label text="Senha">
@@ -67,21 +83,20 @@ function Login() {
                 placeholder="******"
                 required
                 onChange={handleChange}
+                autoComplete="current-password"
               />
             </Label>
           </div>
+          <div className="flex items-center">
+            <div className="text-xs italic text-red-600">
+              {error && <div className="pt-1">{error}</div>}
+            </div>
+          </div>
           <div className="flex justify-between items-start gap-8 mt-4">
             <div className="flex flex-col items-start grow gap-3">
-              <Checkbox
-                label="Manter conectado"
-                name="keepLogged"
-                checked={form.keepLogged}
-                onChange={handleChange}
-              />
               <Button
                 type="submit"
                 text="Acessar"
-                onClick={() => {}}
               />
             </div>
             <div className="flex flex-col items-start gap-2">
