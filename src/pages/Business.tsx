@@ -10,9 +10,12 @@ import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { businessSearchRequest } from "../services/businessServices";
 import cookie from "react-cookies";
+import { formatCNPJ } from "../utils/format";
+import { HashLoader } from "react-spinners";
 
 function Business() {
   const [form, setForm] = useState<{ name: string; }>({ name: '' });
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
@@ -25,9 +28,11 @@ function Business() {
   }>({ last_page: 0, data: [] });
 
   useEffect(() => {
+    setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
     businessSearchRequest(token, page, limit).then((data) => {
       setData(data.data);
+      setIsLoading(false);
     });
   }, [page, limit, sort]);
 
@@ -65,8 +70,8 @@ function Business() {
     last_page: data.last_page,
     data: data.data.map((item) => ({
       ...item,
-      cnpj: item.cnpj ? item.cnpj.toString().replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5') : item.cnpj,
-      status: item.status === 1 ? 'Ativo' : 'Inativo',
+      cnpj: formatCNPJ(item.cnpj as string),
+      status: item.status ? 'Ativo' : 'Inativo',
       actions: actions(item.id as string),
     }))
   };
@@ -124,10 +129,15 @@ function Business() {
         />
       </div>
       <div>
+        {isLoading ? (
+          <div className="w-full h-[50vh] flex justify-center items-center">
+            <HashLoader color="#0078d4" />
+          </div>
+        ) : (
         <Table
           headers={[
-            { name: 'CNPJ', column: 'user', sortable: true },
-            { name: 'Nome', column: 'date', sortable: true },
+            { name: 'CNPJ', column: 'cnpj', sortable: true },
+            { name: 'Nome', column: 'name', sortable: true },
             { name: 'E-mail', column: 'email', sortable: true },
             { name: 'Cidade', column: 'city', sortable: true },
             { name: 'Estado', column: 'state' },
@@ -142,6 +152,7 @@ function Business() {
           setPage={setPage}
           setSort={setSort}
         />
+        )}
       </div>
     </div>
   )

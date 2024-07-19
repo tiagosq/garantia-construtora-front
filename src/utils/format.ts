@@ -11,3 +11,9 @@ export function formatPhoneNumber(phoneNumber: string) {
       throw new Error('O número de telefone deve ter 11 ou 13 dígitos.');
   }
 }
+
+export function formatCNPJ(cnpj: string) {
+  cnpj = cnpj.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+
+  return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+}

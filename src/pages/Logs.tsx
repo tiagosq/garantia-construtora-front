@@ -7,9 +7,11 @@ import { FaFileCsv } from "react-icons/fa";
 import Table from "../components/Table";
 import cookie from "react-cookies";
 import { logRequest } from "../services/logsServices";
+import { HashLoader } from "react-spinners";
 
 function Logs() {
   const [form, setForm] = useState<{ email: string; startDate: string; endDate: string; }>({ email: '', startDate: '', endDate: '' });
+  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [sort, setSort] = useState({ column: '', order: ''});
@@ -21,9 +23,11 @@ function Logs() {
   }>({ last_page: 0, data: [] });
 
   useEffect(() => {
+    setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
     logRequest(token, page, limit).then((data) => {
       setData(data.data);
+      setIsLoading(false);
     });
   }, [page, limit, sort]);
 
@@ -82,6 +86,11 @@ function Logs() {
         />
       </div>
       <div>
+        {isLoading ? (
+          <div className="w-full h-[50vh] flex justify-center items-center">
+            <HashLoader color="#0078d4" />
+          </div>
+        ) : (
         <Table
           headers={[
             { name: 'Data', column: 'created_at' },
@@ -97,6 +106,7 @@ function Logs() {
           setPage={setPage}
           setSort={setSort}
         />
+        )}
       </div>
     </div>
   )

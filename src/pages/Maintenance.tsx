@@ -8,9 +8,11 @@ import Table from "../components/Table";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import { HashLoader } from "react-spinners";
 
 function Maintenance() {
   const [form, setForm] = useState<{ name: string; }>({ name: '' });
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const actions = (
@@ -97,20 +99,26 @@ function Maintenance() {
         />
       </div>
       <div>
-        <Table
-          headers={[
-            { name: 'Usuário', column: 'user', sortable: true },
-            { name: 'Data', column: 'date', sortable: true },
-            { name: 'Ação', column: 'action' },
-            { name: 'Status', column: 'status' },
-            { name: 'Ações', column: 'actions' },
-          ]}
-          data={[
-            { user: '1', date: '2', action: '3', status: 'Ativo', actions },
-            { user: '4', date: '5', action: '6', status: 'Ativo', actions },
-            { user: '7', date: '8', action: '9', status: 'Inativo', actions },
-          ]}
-        />
+        {isLoading ? (
+          <div className="w-full h-[50vh] flex justify-center items-center">
+            <HashLoader color="#0078d4" />
+          </div>
+        ) : (
+          <Table
+            headers={[
+              { name: 'Usuário', column: 'user', sortable: true },
+              { name: 'Data', column: 'date', sortable: true },
+              { name: 'Ação', column: 'action' },
+              { name: 'Status', column: 'status' },
+              { name: 'Ações', column: 'actions' },
+            ]}
+            data={[
+              { user: '1', date: '2', action: '3', status: 'Ativo', actions },
+              { user: '4', date: '5', action: '6', status: 'Ativo', actions },
+              { user: '7', date: '8', action: '9', status: 'Inativo', actions },
+            ]}
+          />
+        )}
       </div>
     </div>
   )

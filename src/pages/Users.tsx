@@ -11,9 +11,11 @@ import { FaPlus } from "react-icons/fa6";
 import { formatPhoneNumber } from "../utils/format";
 import { userSearchRequest } from "../services/userServices";
 import cookie from "react-cookies";
+import { HashLoader } from "react-spinners";
 
 function Business() {
   const [form, setForm] = useState<{ email: string; }>({ email: '' });
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
@@ -26,9 +28,11 @@ function Business() {
   }>({ last_page: 0, data: [] });
 
   useEffect(() => {
+    setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
     userSearchRequest(token, page, limit).then((data) => {
       setData(data.data);
+      setIsLoading(false);
     });
   }, [page, limit, sort]);
 
@@ -123,6 +127,11 @@ function Business() {
         />
       </div>
       <div>
+        {isLoading ? (
+          <div className="w-full h-[50vh] flex justify-center items-center">
+            <HashLoader color="#0078d4" />
+          </div>
+        ) : (
         <Table
           headers={[
             { name: 'Usuário', column: 'email', sortable: true },
@@ -140,6 +149,7 @@ function Business() {
           setPage={setPage}
           setSort={setSort}
         />
+        )}
       </div>
     </div>
   )

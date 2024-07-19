@@ -7,11 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { roleSearchRequest } from "../services/rolesServices";
 import cookie from "react-cookies";
+import { HashLoader } from "react-spinners";
 
 function Roles() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(25);
   const [sort, setSort] = useState({ column: '', order: ''});
   const [data, setData] = useState<{
     last_page: number;
@@ -21,9 +23,11 @@ function Roles() {
   }>({ last_page: 0, data: [] });
 
   useEffect(() => {
+    setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
     roleSearchRequest(token, page, limit).then((data) => {
       setData(data.data);
+      setIsLoading(false);
     });
   }, [page, limit, sort]);
 
@@ -66,7 +70,6 @@ function Roles() {
     }))
   };
 
-
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <div className="w-full flex flex-wrap justify-start items-end gap-4">
@@ -85,6 +88,11 @@ function Roles() {
       />
       </div>
       <div>
+        {isLoading ? (
+          <div className="w-full h-[50vh] flex justify-center items-center">
+            <HashLoader color="#0078d4" />
+          </div>
+        ) : (
         <Table
           headers={[
             { name: 'Função', column: 'name', sortable: true },
@@ -98,6 +106,7 @@ function Roles() {
           setSort={setSort}
           sort={sort}
         />
+        )}
       </div>
     </div>
   )
