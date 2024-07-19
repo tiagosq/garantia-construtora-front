@@ -6,7 +6,7 @@ import { MdAccessTime, MdAutoAwesomeMosaic, MdExitToApp, MdOutlineWbSunny } from
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import cookie from "react-cookies";
-import { refreshTokenRequest } from "../../services/authServices";
+import { getAuthData, refreshTokenRequest } from "../../services/authServices";
 import Swal from "sweetalert2";
 
 function Menu() {
@@ -33,6 +33,10 @@ function Menu() {
           navigate('/login')
         }, 3000);
       });
+      // const newToken = cookie.load('GC_JWT_AUTH');
+      // getAuthData(newToken).then(({ data }) => {
+      //   console.log(data);
+      // });
     }
   }, [navigate]);
 

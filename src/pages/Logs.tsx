@@ -13,7 +13,7 @@ function Logs() {
   const [form, setForm] = useState<{ email: string; startDate: string; endDate: string; }>({ email: '', startDate: '', endDate: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(25);
   const [sort, setSort] = useState({ column: '', order: ''});
   const [data, setData] = useState<{
     last_page: number;

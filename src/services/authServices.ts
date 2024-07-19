@@ -66,3 +66,15 @@ export const refreshTokenRequest = async (token: string) => {
     return data;
   }
 };
+
+export const getAuthData = async (token: string) => {
+  const response = await fetch(`${BASE_URL}/users/own`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+  return data;
+};
