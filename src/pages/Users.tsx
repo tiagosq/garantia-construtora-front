@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
@@ -8,12 +8,31 @@ import Table from "../components/Table";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import { formatPhoneNumber } from "../utils/format";
+import { userSearchRequest } from "../services/userServices";
+import cookie from "react-cookies";
 
 function Business() {
   const [form, setForm] = useState<{ email: string; }>({ email: '' });
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(25);
+  const [sort, setSort] = useState({ column: '', order: ''});
+  const [data, setData] = useState<{
+    last_page: number;
+    data: { 
+      [key: string]: string | number | React.ReactNode; 
+    }[] 
+  }>({ last_page: 0, data: [] });
 
-  const actions = (
+  useEffect(() => {
+    const token = cookie.load('GC_JWT_AUTH');
+    userSearchRequest(token, page, limit).then((data) => {
+      setData(data.data);
+    });
+  }, [page, limit, sort]);
+
+  const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
       <FaRegFile />
       <FaRegEdit />
@@ -43,7 +62,15 @@ function Business() {
     </div>
   );
 
-  
+  const parsedData = {
+    last_page: data.last_page,
+    data: data.data.map((item) => ({
+      ...item,
+      phone: formatPhoneNumber(item.phone as string),
+      status: item.status ? 'Ativo' : 'Inativo',
+      actions: actions(item.id as string),
+    }))
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -62,7 +89,6 @@ function Business() {
         )}
       />
       </div>
-
       <div className="w-full flex flex-wrap justify-start items-end gap-4">
         <Label text="E-mail" customStyle="grow md:grow-0 min-w-96">
           <Input
@@ -99,15 +125,20 @@ function Business() {
       <div>
         <Table
           headers={[
-            { name: 'Usuário', column: 'user', sortable: true },
+            { name: 'Usuário', column: 'email', sortable: true },
+            { name: 'Nome', column: 'fullname', sortable: true },
             { name: 'Função', column: 'role' },
-            { name: 'Criado em', column: 'date', sortable: true },
+            { name: 'Criado em', column: 'created_at', sortable: true },
             { name: 'Status', column: 'status' },
             { name: 'Ações', column: 'actions' },
           ]}
-          data={[
-            { user: 'Admin', role: 'Administrador', date: '01/01/2021', status: 'Ativo', actions },
-          ]}
+          data={parsedData}
+          limit={limit}
+          page={page}
+          sort={sort}
+          setLimit={setLimit}
+          setPage={setPage}
+          setSort={setSort}
         />
       </div>
     </div>

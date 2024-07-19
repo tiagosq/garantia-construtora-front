@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
@@ -8,12 +8,30 @@ import Table from "../components/Table";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import { businessSearchRequest } from "../services/businessServices";
+import cookie from "react-cookies";
 
 function Business() {
   const [form, setForm] = useState<{ name: string; }>({ name: '' });
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(25);
+  const [sort, setSort] = useState({ column: '', order: ''});
+  const [data, setData] = useState<{
+    last_page: number;
+    data: { 
+      [key: string]: string | number | React.ReactNode; 
+    }[] 
+  }>({ last_page: 0, data: [] });
 
-  const actions = (
+  useEffect(() => {
+    const token = cookie.load('GC_JWT_AUTH');
+    businessSearchRequest(token, page, limit).then((data) => {
+      setData(data.data);
+    });
+  }, [page, limit, sort]);
+
+  const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
       <FaRegFile />
       <FaRegEdit />
@@ -43,6 +61,15 @@ function Business() {
     </div>
   );
 
+  const parsedData = {
+    last_page: data.last_page,
+    data: data.data.map((item) => ({
+      ...item,
+      cnpj: item.cnpj ? item.cnpj.toString().replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5') : item.cnpj,
+      status: item.status === 1 ? 'Ativo' : 'Inativo',
+      actions: actions(item.id as string),
+    }))
+  };
   
 
   return (
@@ -99,17 +126,21 @@ function Business() {
       <div>
         <Table
           headers={[
-            { name: 'Usuário', column: 'user', sortable: true },
-            { name: 'Data', column: 'date', sortable: true },
-            { name: 'Ação', column: 'action' },
-            { name: 'Status', column: 'status' },
+            { name: 'CNPJ', column: 'user', sortable: true },
+            { name: 'Nome', column: 'date', sortable: true },
+            { name: 'E-mail', column: 'email', sortable: true },
+            { name: 'Cidade', column: 'city', sortable: true },
+            { name: 'Estado', column: 'state' },
+            { name: 'status', column: 'status' },
             { name: 'Ações', column: 'actions' },
           ]}
-          data={[
-            { user: '1', date: '2', action: '3', status: 'Ativo', actions },
-            { user: '4', date: '5', action: '6', status: 'Ativo', actions },
-            { user: '7', date: '8', action: '9', status: 'Inativo', actions },
-          ]}
+          data={parsedData}
+          limit={limit}
+          page={page}
+          sort={sort}
+          setLimit={setLimit}
+          setPage={setPage}
+          setSort={setSort}
         />
       </div>
     </div>

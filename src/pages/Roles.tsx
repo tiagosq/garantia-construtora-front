@@ -1,19 +1,33 @@
-import { useState } from "react";
-import Input from "../components/Input";
-import Label from "../components/Label";
+import { useEffect, useState } from "react";
 import Button from "../components/Button";
-import { IoSearchOutline } from "react-icons/io5";
-import { FaFileCsv, FaRegEdit, FaRegFile, FaRegTrashAlt } from "react-icons/fa";
+import { FaRegEdit, FaRegFile, FaRegTrashAlt } from "react-icons/fa";
 import Table from "../components/Table";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import { roleSearchRequest } from "../services/rolesServices";
+import cookie from "react-cookies";
 
 function Roles() {
-  const [form, setForm] = useState<{ name: string; }>({ name: '' });
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [sort, setSort] = useState({ column: '', order: ''});
+  const [data, setData] = useState<{
+    last_page: number;
+    data: { 
+      [key: string]: string | number | React.ReactNode; 
+    }[] 
+  }>({ last_page: 0, data: [] });
 
-  const actions = (
+  useEffect(() => {
+    const token = cookie.load('GC_JWT_AUTH');
+    roleSearchRequest(token, page, limit).then((data) => {
+      setData(data.data);
+    });
+  }, [page, limit, sort]);
+
+  const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
       <FaRegFile />
       <FaRegEdit />
@@ -43,7 +57,15 @@ function Roles() {
     </div>
   );
 
-  
+  const parsedData = {
+    last_page: data.last_page,
+    data: data.data.map((item) => ({
+      ...item,
+      status: item.status === 1 ? 'Ativo' : 'Inativo',
+      actions: actions(item.id as string),
+    }))
+  };
+
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -65,14 +87,16 @@ function Roles() {
       <div>
         <Table
           headers={[
-            { name: 'Função', column: 'role', sortable: true },
+            { name: 'Função', column: 'name', sortable: true },
             { name: 'Ações', column: 'actions' },
           ]}
-          data={[
-            { role: 'Administrador', actions },
-            { role: 'Usuário', actions },
-            { role: 'Convidado', actions },
-          ]}
+          data={parsedData}
+          limit={limit}
+          page={page}
+          setLimit={setLimit}
+          setPage={setPage}
+          setSort={setSort}
+          sort={sort}
         />
       </div>
     </div>

@@ -1,13 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
 import { IoSearchOutline } from "react-icons/io5";
 import { FaFileCsv } from "react-icons/fa";
 import Table from "../components/Table";
+import cookie from "react-cookies";
+import { logRequest } from "../services/logsServices";
 
 function Logs() {
   const [form, setForm] = useState<{ email: string; startDate: string; endDate: string; }>({ email: '', startDate: '', endDate: '' });
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [sort, setSort] = useState({ column: '', order: ''});
+  const [data, setData] = useState<{
+    last_page: number;
+    data: { 
+      [key: string]: string | number | React.ReactNode; 
+    }[] 
+  }>({ last_page: 0, data: [] });
+
+  useEffect(() => {
+    const token = cookie.load('GC_JWT_AUTH');
+    logRequest(token, page, limit).then((data) => {
+      setData(data.data);
+    });
+  }, [page, limit, sort]);
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -66,16 +84,18 @@ function Logs() {
       <div>
         <Table
           headers={[
+            { name: 'Data', column: 'created_at' },
             { name: 'Usuário', column: 'user', sortable: true },
-            { name: 'Data', column: 'date', sortable: true },
-            { name: 'Ação', column: 'action' },
-            { name: 'Status', column: 'status' },
+            { name: 'Endereço IP', column: 'ip' },
+            { name: 'Ação', column: 'action' }
           ]}
-          data={[
-            { user: '1', date: '2', action: '3', status: 'Ativo' },
-            { user: '4', date: '5', action: '6', status: 'Ativo' },
-            { user: '7', date: '8', action: '9', status: 'Inativo' },
-          ]}
+          data={data}
+          limit={limit}
+          page={page}
+          sort={sort}
+          setLimit={setLimit}
+          setPage={setPage}
+          setSort={setSort}
         />
       </div>
     </div>

@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { FaArrowLeft, FaArrowRight, FaRegSadCry, FaSortDown, FaSortUp } from "react-icons/fa";
 import { FaSort } from "react-icons/fa6";
 import Select from "../Select";
+import moment, { MomentInput } from "moment";
 
 type IProps = {
   headers: {
@@ -10,25 +10,37 @@ type IProps = {
     sortable?: boolean;
   }[];
   data: {
-    [key: string]: string | number | React.ReactNode;
-  }[];
+    last_page: number;
+    data: {
+      [key: string]: string | number | React.ReactNode;
+    }[],
+  };
+  limit: number;
+  page: number;
+  sort: {
+    column: string;
+    order: string;
+  };
+  setLimit: (limit: number) => void;
+  setPage: (page: number) => void;
+  setSort: (sort: { column: string; order: string; }) => void;
 };
 
-function Table({ headers, data }: IProps) {
-  const [sort, setSort] = useState({ column: '', order: ''});
-  const [limit, setLimit] = useState(25);
+function Table({ headers, data, limit, page, sort, setLimit, setPage, setSort }: IProps) {
+  const dateColumns = ['created_at', 'updated_at', 'deleted_at'];
 
   return (
     <div className="w-full">
-      {data.length > 0 ? (
+      {data.data?.length > 0 ? (
       <div className="w-full flex flex-col justify-end items-end gap-4">
         <div className="w-full">
           <table className="w-full overflow-x-auto" width="100%">
             <thead className="bg-blue-2">
-              {headers.map((header) => (
+              <tr>
+              {headers.map((header, index) => (
                 <th
-                  key={header.column}
-                  className="!text-gray-50 font-bold text-sm text-left py-2 px-4 cursor-pointer"
+                  key={`header-${index}`}
+                  className="!text-gray-50 font-bold text-sm text-left py-2 px-3 cursor-pointer"
                   onClick={() => {
                     if (sort.column === header.column) {
                       setSort({
@@ -53,18 +65,21 @@ function Table({ headers, data }: IProps) {
                   )}
                 </th>
               ))}
+              </tr>
             </thead>
             <tbody>
-              {data.map((item, index) => (
-                <tr key={index} className="even:bg-blue-2 even:bg-opacity-10 dark:bg-primary 
+              {data.data.map((item, index) => (
+                <tr key={`line-${index}`} className="even:bg-blue-2 even:bg-opacity-10 dark:bg-primary 
                 hover:bg-opacity-30 hover:bg-blue-2 transition-all duration-150 cursor-pointer">
-                  {headers.map((header) => (
+                  {headers.map((header, icol) => (
                     <td
-                      key={`${header.column}-${index}`} 
-                      className={`text-typo-primary text-sm text-left py-2 px-4
+                      key={`cell-${icol}-${index}`} 
+                      className={`text-typo-primary text-sm text-left py-1 px-3
                         ${header.column === 'status' && (item[header.column]?.toString().toLowerCase() === 'ativo' ? '!text-green-600' : '!text-red-600')}`}
                     >
-                      {item[header.column]}
+                      {dateColumns.includes(header.column) 
+                        ? moment(item[header.column] as MomentInput).format('YYYY/MM/DD HH:mm:ss')
+                        : item[header.column]}
                     </td>
                   ))}
                 </tr>
@@ -73,29 +88,32 @@ function Table({ headers, data }: IProps) {
           </table>
         </div>
         <div className="flex gap-4 flex-wrap justify-end">
+          {data.last_page > 1 && (
           <div className="flex gap-0.5 justify-center items-center">
-            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tl rounded-bl">
+            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tl rounded-bl"
+              onClick={page > 1 ? () => setPage(page - 1) : undefined}
+            >
               <FaArrowLeft />
             </div>
-            <div className="cursor-pointer brightness-125 saturate-150 hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1">
-              1
-            </div>
-            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1">
-              2
-            </div>
-            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1">
-              3
-            </div>
-            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1">
-              4
-            </div>
-            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tr rounded-br">
+            {Array.from({ length: data.last_page }, (_, i) => i + 1).map((item) => (
+              <div className={`cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1
+              ${page === item && 'brightness-125 saturate-150'}`}
+                onClick={page !== item ? () => setPage(item) : undefined}
+              >
+                {item}
+              </div>
+            ))}
+            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tr rounded-br"
+              onClick={page < data.last_page ? () => setPage(page + 1) : undefined}
+            >
               <FaArrowRight />
             </div>
           </div>
+          )}
           <div className="flex items-center justify-end gap-2">
             <span className="text-typo-secondary text-sm font-bold whitespace-nowrap">Resultados por página:</span>
             <Select
+              name="limit"
               options={[
                 { value: '25', label: '25' },
                 { value: '50', label: '50' },
