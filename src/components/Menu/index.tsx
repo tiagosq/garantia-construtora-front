@@ -20,23 +20,23 @@ function Menu() {
     if (!token) {
       navigate('/login');
     } else {
-      refreshTokenRequest(token).then(({ data }) => {
-        cookie.save('GC_JWT_AUTH', data.access_token, { path: '/' });
-      }).catch(() => {
-        Swal.fire({
-          title: 'Sessão expirada',
-          text: 'Sua sessão expirou, por favor, faça login novamente.',
-          icon: 'error',
-        });
-        setTimeout(() => {
-          cookie.remove('GC_JWT_AUTH', { path: '/' });
-          navigate('/login')
-        }, 3000);
-      });
-      // const newToken = cookie.load('GC_JWT_AUTH');
-      // getAuthData(newToken).then(({ data }) => {
-      //   console.log(data);
+      // refreshTokenRequest(token).then(({ data }) => {
+      //   cookie.save('GC_JWT_AUTH', data.access_token, { path: '/' });
+      // }).catch(() => {
+      //   Swal.fire({
+      //     title: 'Sessão expirada',
+      //     text: 'Sua sessão expirou, por favor, faça login novamente.',
+      //     icon: 'error',
+      //   });
+      //   setTimeout(() => {
+      //     cookie.remove('GC_JWT_AUTH', { path: '/' });
+      //     navigate('/login')
+      //   }, 3000);
       // });
+      // // const newToken = cookie.load('GC_JWT_AUTH');
+      // // getAuthData(newToken).then(({ data }) => {
+      // //   console.log(data);
+      // // });
     }
   }, [navigate]);
 

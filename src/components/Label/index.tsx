@@ -1,5 +1,5 @@
 type IProps = {
-  text: string;
+  text: string | React.ReactNode;
   customStyle?: string;
   children: React.ReactNode;
 }

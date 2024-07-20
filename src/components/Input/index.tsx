@@ -1,5 +1,5 @@
 type IProps = {
-  type: 'text' | 'password' | 'email' | 'number' | 'tel' | 'date';
+  type: 'text' | 'password' | 'email' | 'number' | 'tel' | 'date' | 'file';
   name: string;
   value: string;
   placeholder: string;
@@ -8,10 +8,11 @@ type IProps = {
   customStyle?: string;
   disabled?: boolean;
   autoComplete?: string;
+  accept?: string;
 }
 
 function Input({
-  type, name, value, placeholder, disabled, required = false, onChange, customStyle = '', autoComplete }: IProps
+  type, name, value, placeholder, disabled, required = false, onChange, customStyle = '', autoComplete, accept }: IProps
 ) {
   return (
     <input
@@ -24,6 +25,7 @@ function Input({
       required={required}
       disabled={disabled}
       autoComplete={autoComplete}
+      accept={accept}
     />
   )
 }
