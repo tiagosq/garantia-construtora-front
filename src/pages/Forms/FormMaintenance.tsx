@@ -26,7 +26,7 @@ type IForm = {
 
 function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const { id } = useParams();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [form, setForm] = useState<IForm>({
     name: '',

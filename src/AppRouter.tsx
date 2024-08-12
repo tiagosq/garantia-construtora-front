@@ -20,14 +20,16 @@ import FormBusiness from './pages/Forms/FormBusiness'
 import FormMaintenance from './pages/Forms/FormMaintenance'
 import Answer from './pages/Answer'
 
+const BASE_URL = 'http://191.101.78.85:7777/garantiaconstrutora.com.br';
+
 function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<Navigate to="/login" />} />
-      <Route path="/reset-password/:hash" element={<ResetPassword />} />
+      <Route path={`${BASE_URL}/`} element={<Login />} />
+      <Route path={`${BASE_URL}/login`} element={<Login />} />
+      <Route path={`${BASE_URL}/forgot-password`} element={<ForgotPassword />} />
+      <Route path={`${BASE_URL}/reset-password`} element={<Navigate to="/login" />} />
+      <Route path={`${BASE_URL}/reset-password/:hash`} element={<ResetPassword />} />
       <Route element={<Menu />}>
         <Route path="/dashboard" index element={<Dashboard />} />
 

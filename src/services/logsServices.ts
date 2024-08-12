@@ -12,7 +12,7 @@ export type ISearch = {
   };
 }
 
-export const logRequest = async (token: string, page = 1, limit = 25, filters: ISearch) => {
+export const logRequest = async (token: string, page = 1, limit = 25) => {
   const url = `${BASE_URL}/logs?page=${page}&limit=${limit}`;
   const response = await fetch(url, {
     method: 'GET',

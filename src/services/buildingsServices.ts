@@ -1,16 +1,20 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 type IBuilding = {
-  id?: string;
-  name: string;
-  cnpj: string;
-  email: string;
-  phone: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-  status: boolean;
+  name: string,
+  owner: string,
+  phone: string,
+  address: string,
+  number: string,
+  cep: string,
+  obs: string,
+  district: string,
+  city: string,
+  uf: string,
+  constructionDate: string,
+  deliveryDate: string,
+  warrantyDate: string,
+  status: boolean,
 };
 
 export const buildingSearchRequest = async (token: string, page = 1, limit = 25) => {
@@ -37,7 +41,7 @@ export const buildingGetRequest = async (token: string, id: string) => {
   return response.json();
 };
 
-export const businessCreateRequest = async (token: string, data: IBuilding) => {
+export const buildingCreateRequest = async (token: string, data: IBuilding) => {
   const url = `${BASE_URL}/buildings`;
   const response = await fetch(url, {
     method: 'POST',

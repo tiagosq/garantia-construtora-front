@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../../components/Input";
 import Label from "../../components/Label";
 import Select from "../../components/Select";
@@ -9,27 +9,31 @@ import ErrorList from "../../components/ErrorList";
 import Swal from "sweetalert2";
 import { useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
+import { buildingCreateRequest, buildingGetRequest, buildingUpdateRequest } from "../../services/buildingsServices";
+import cookie from "react-cookies";
+
+const defaultForm = {
+  name: '',
+  owner: '',
+  phone: '',
+  address: '',
+  number: '',
+  cep: '',
+  obs: '',
+  district: '',
+  city: '',
+  uf: '',
+  constructionDate: '',
+  deliveryDate: '',
+  warrantyDate: '',
+  status: true,
+};
 
 function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
-  const [form, setForm] = useState({
-    name: '',
-    responsable: '',
-    phone: '',
-    address: '',
-    number: '',
-    cep: '',
-    obs: '',
-    district: '',
-    city: '',
-    uf: '',
-    constructionDate: '',
-    deliveryDate: '',
-    warrantyDate: '',
-    status: true,
-  });
+  const [form, setForm] = useState(defaultForm);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { target: { value, name } } = e;
@@ -51,14 +55,71 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Validações aqui.
-    setErrors(['Erro ao cadastrar empreendimento']);
-    Swal.fire({
-      title: 'Sucesso!',
-      text: 'Empreendimento cadastrado com sucesso.',
-      icon: 'success',
-    });
+    const errors = [];
+    if (!form.name  || !form.constructionDate || !form.deliveryDate || !form.warrantyDate) {
+      errors.push('Preencha todos os campos obrigatórios');
+    }
+    setErrors(errors);
+    const token = cookie.load('GC_JWT_AUTH');
+    if(!id) {
+      buildingCreateRequest(token, form)
+      .then((data) => {
+        if (data.data) {
+          Swal.fire({
+            title: 'Sucesso!',
+            text: 'Função cadastrada com sucesso.',
+            icon: 'success',
+          }).then(() => {
+            window.location.href = '/business';
+          });
+        }
+      })
+      .catch(() => {
+        Swal.fire({
+          title: 'Erro!',
+          text: 'Ocorreu um erro ao cadastrar.',
+          icon: 'error',
+        });
+      });
+    } else {
+      buildingUpdateRequest(token, form, id)
+      .then((data) => {
+        if (data.data) {
+          Swal.fire({
+            title: 'Sucesso!',
+            text: 'Função cadastrada com sucesso.',
+            icon: 'success',
+          }).then(() => {
+            window.location.href = '/business';
+          });
+        }
+      })
+      .catch(() => {
+        Swal.fire({
+          title: 'Erro!',
+          text: 'Ocorreu um erro ao cadastrar.',
+          icon: 'error',
+        });
+      });
+    }
   };
+
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      const token = cookie.load('GC_JWT_AUTH');
+      buildingGetRequest(token, id)
+      .then((data) => {
+        setForm({
+          ...data.data
+        });
+        setIsLoading(false);
+      });
+    } else {
+      setIsLoading(false);
+      setForm(defaultForm);
+    }
+  }, [id]);
 
   if(id && isLoading) {
     return (
@@ -95,9 +156,9 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
             customStyle="grow-[4]"
           >
             <Input
-              name="responsable"
+              name="owner"
               type="text"
-              value={form.responsable}
+              value={form.owner}
               onChange={handleChange}
               placeholder="Nome do Responsável"
               required

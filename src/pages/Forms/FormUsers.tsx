@@ -13,7 +13,7 @@ import { userCreateRequest, userGetRequest, userUpdateRequest } from "../../serv
 import cookie from "react-cookies";
 
 const defaultForm = {
-  fullname: '',
+  name: '',
   email: '',
   phone: '',
   password: '',
@@ -44,7 +44,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
   };
 
   const validate = () => {
-    if (form.fullname === '' || form.email === '' || form.phone === '' || form.password === '' || form.role === '') {
+    if (form.name === '' || form.email === '' || form.phone === '' || form.password === '' || form.role === '') {
       return true;
     }
     if(!form.password || form.password.length < 6) {
@@ -61,14 +61,8 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
     }
     setErrors(errors);
     const token = cookie.load('GC_JWT_AUTH');
-    const response = {
-      name: form.name,
-      management: form.management,
-      status: form.status,
-      permissions: JSON.stringify(form.permissions),
-    };
     if(!id) {
-      userCreateRequest(token, response)
+      userCreateRequest(token, form)
       .then((data) => {
         if (data.data) {
           Swal.fire({
@@ -88,7 +82,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
         });
       });
     } else {
-      userUpdateRequest(token, response, id)
+      userUpdateRequest(token, form, id)
       .then((data) => {
         if (data.data) {
           Swal.fire({
@@ -156,9 +150,9 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
             customStyle="grow"
           >
             <Input
-              name="fullname"
+              name="name"
               type="text"
-              value={form.fullname}
+              value={form.name}
               onChange={handleChange}
               placeholder="Nome Completo"
               disabled={type === 'view'}

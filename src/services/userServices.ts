@@ -7,7 +7,7 @@ type IUser = {
   password: string;
   role: string;
   status: boolean;
-  business: string;
+  business?: string;
 };
 
 export const userSearchRequest = async (token: string, page = 1, limit = 25) => {
