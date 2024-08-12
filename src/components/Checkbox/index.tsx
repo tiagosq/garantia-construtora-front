@@ -4,12 +4,12 @@ type IProps = {
   checked: boolean;
   disabled?: boolean;
   required?: boolean;
-  onClick: (e: React.MouseEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   customStyle?: string;
 };
 
 function Checkbox({
-  label, name, checked, disabled, required, onClick, customStyle = '',
+  label, name, checked, disabled, required, onChange, customStyle = '',
 }: IProps) {
   return (
     <label className={`w-full flex gap-1 text-sm text-black-4 dark:text-typo-secondary ${customStyle}`}>
@@ -19,7 +19,7 @@ function Checkbox({
         checked={checked}
         disabled={disabled}
         required={required}
-        onClick={onClick}
+        onChange={onChange}
       />
       <span>{label}</span>
     </label>

@@ -1,6 +1,6 @@
 type IProps = {
   options: {
-    value: string;
+    value: string | boolean | number;
     label: string;
   }[];
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -22,7 +22,7 @@ function Select({ name, options, disabled, onChange, value, customStyle = '', re
       disabled={disabled}
     >
       {options.map((option) => (
-        <option key={option.value} value={option.value} className="dark:text-typo-primary">
+        <option key={option.value.toString()} value={option.value.toString()} className="dark:text-typo-primary">
           {option.label}
         </option>
       ))}

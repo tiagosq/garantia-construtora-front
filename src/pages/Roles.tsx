@@ -5,7 +5,7 @@ import Table from "../components/Table";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
-import { roleSearchRequest } from "../services/rolesServices";
+import { roleDeleteRequest, roleSearchRequest } from "../services/rolesServices";
 import cookie from "react-cookies";
 import { HashLoader } from "react-spinners";
 
@@ -33,8 +33,8 @@ function Roles() {
 
   const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
-      <FaRegFile />
-      <FaRegEdit />
+      <FaRegFile onClick={() => navigate(`/roles/${id}/view`)} />
+      <FaRegEdit onClick={() => navigate(`/roles/${id}/edit`)} />
       <FaRegTrashAlt 
         className="text-red-600" 
         onClick={
@@ -49,10 +49,23 @@ function Roles() {
             cancelButtonText: 'Cancelar',
           }).then((result) => {
             if (result.isConfirmed) {
-              Swal.fire({
-                title: 'Excluído!',
-                text: 'O registro foi excluído.',
-                icon: 'success',
+              roleDeleteRequest(cookie.load('GC_JWT_AUTH'), id).then(() => {
+                Swal.fire({
+                  title: 'Excluído!',
+                  text: 'O registro foi excluído.',
+                  icon: 'success',
+                }).then(() => {
+                  setData({
+                    last_page: data.last_page,
+                    data: data.data.filter((item) => item.id !== id)
+                  });
+                }).catch(() => {
+                  Swal.fire({
+                    title: 'Erro!',
+                    text: 'Ocorreu um erro ao excluir o registro.',
+                    icon: 'error',
+                  });
+                });
               });
             }
           })
@@ -78,7 +91,7 @@ function Roles() {
       </h1>
       <Button
         type="button"
-        onClick={() => navigate('/buildings/create')}
+        onClick={() => navigate('/roles/create')}
         customStyle="!px-4 !py-1"
         text={(
           <span className="inline-flex items-center gap-2">

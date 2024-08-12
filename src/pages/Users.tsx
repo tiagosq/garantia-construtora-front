@@ -38,8 +38,8 @@ function Business() {
 
   const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
-      <FaRegFile />
-      <FaRegEdit />
+      <FaRegFile onClick={() => navigate(`/users/${id}/view`)} />
+      <FaRegEdit onClick={() => navigate(`/users/${id}/edit`)} />
       <FaRegTrashAlt 
         className="text-red-600" 
         onClick={

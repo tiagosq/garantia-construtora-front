@@ -7,8 +7,12 @@ import Button from "../../components/Button";
 import { FaRegSave } from "react-icons/fa";
 import ErrorList from "../../components/ErrorList";
 import Swal from "sweetalert2";
+import { useParams } from "react-router-dom";
+import { HashLoader } from "react-spinners";
 
 function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
+  const { id } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [form, setForm] = useState({
     name: '',
@@ -24,6 +28,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
     constructionDate: '',
     deliveryDate: '',
     warrantyDate: '',
+    status: true,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -34,11 +39,11 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
     });
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
-    const { name, checked } = e.currentTarget;
+  const handleClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name } = e.currentTarget;
     setForm(prevForm => ({
       ...prevForm,
-      [name]: !checked
+      [name]: !prevForm.status,
     }));
   };
 
@@ -54,6 +59,14 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
       icon: 'success',
     });
   };
+
+  if(id && isLoading) {
+    return (
+      <div className="w-full h-[50vh] flex justify-center items-center">
+        <HashLoader color="#0078d4" />
+      </div>
+    )
+  }
 
   return (
     <div className="w-full h-full max-w-[1000px]">
@@ -281,13 +294,14 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
         </div>
         <div className="flex flex-wrap gap-4">
           <Checkbox
-            checked={false}
+            checked={form.status}
             name="active"
             label="Empreendimento Ativo"
             disabled={type === 'view'}
-            onClick={handleClick}
+            onChange={handleClick}
           />
         </div>
+        {type === 'edit' && (
         <div className="flex flex-wrap gap-4 justify-end">
           <Button
             type="submit"
@@ -300,6 +314,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
             customStyle="!bg-blue-2 px-8 py-3 text-sm"
           />
         </div>
+        )}
       </form>
     </div>
   )

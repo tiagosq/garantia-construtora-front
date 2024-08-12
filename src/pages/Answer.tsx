@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Label from "../components/Label";
 import Input from "../components/Input";
 import Select from "../components/Select";
@@ -7,67 +7,53 @@ import Button from "../components/Button";
 import { FaRegFileAlt, FaRegFileImage, FaRegFilePdf, FaRegFileVideo, FaRegSave } from "react-icons/fa";
 import { MdBlock, MdOutlineCheckCircle, MdOutlineCircle } from "react-icons/md";
 import FileInput from "../components/FileInput";
-
-type IAttachment = {
-  name: string;
-  type: string;
-  size: number;
-  url: string;
-};
-
-type IQuestion = {
-  name: string;
-  description: string;
-  date: string;
-  status: string;
-  observations: string;
-  photos: IAttachment[];
-  docs: IAttachment[];
-};
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import cookie from 'react-cookies';
+import { maintenanceFinishRequest, maintenanceRequest, questionsRequest, questionsUpdateRequest } from "../services/maintenanceServices";
+import { HashLoader } from "react-spinners";
+import { IMaintenance, IQuestion } from "../types/types";
 
 function Answer() {
+  const { business, maintenance } = useParams();
+  const navigate = useNavigate();
+
+  if(!business || !maintenance) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Residencial ou Manutenção não informados',
+    }).then(() => {
+      navigate('/maintenance');
+    });
+  }
+
   const templateQuestion = {
+    id: '',
     name: '',
     description: '',
+    answer: '',
     date: '',
-    status: '',
+    status: false,
     observations: '',
     photos: [],
     docs: [],
   };
 
-  const question = [
-    {
-      ...templateQuestion,
-      name: 'Texto da primeira questão',
-      description: 'Descrição da primeira questão, com mais detalhes, se necessário e com a quantidade de caracteres que for necessário para a descrição da questão em si.',
-    },
-    {
-      ...templateQuestion,
-      name: 'Texto da segunda questão',
-      description: 'Descrição da segunda questão, com mais detalhes, se necessário e com a quantidade de caracteres que for necessário para a descrição da questão em si.',
-    },
-    {
-      ...templateQuestion,
-      name: 'Texto da terceira questão',
-      description: 'Descrição da terceira questão, com mais detalhes, se necessário e com a quantidade de caracteres que for necessário para a descrição da questão em si.',
-    },
-    {
-      ...templateQuestion,
-      name: 'Texto da quarta questão',
-      description: 'Descrição da quarta questão, com mais detalhes, se necessário e com a quantidade de caracteres que for necessário para a descrição da questão em si.',
-    },
-    {
-      ...templateQuestion,
-      name: 'Texto da quinta questão',
-      description: 'Descrição da quinta questão, com mais detalhes, se necessário e com a quantidade de caracteres que for necessário para a descrição da questão em si.',
-    },
-  ];
-
-  const [answers, setAnswers] = useState<IQuestion[]>(question as IQuestion[]);
+  const [answers, setAnswers] = useState<IQuestion[]>([] as IQuestion[]);
   const [activeAnswer, setActiveAnswer] = useState<IQuestion>(answers[0]);
   const [index, setIndex] = useState<number>(0);
   const [form, setForm] = useState<IQuestion>(templateQuestion);
+  const [maintenanceData, setMaintenanceData] = useState<IMaintenance>({
+    name: '',
+    description: '',
+    start_date: '',
+    end_date: '',
+    is_completed: false,
+    business: '',
+    building: '', // Add the 'building' property
+    user: '',
+  });
 
   const handleSave = () => {
     const newAnswers = answers.map((item, idx) => {
@@ -84,7 +70,28 @@ function Answer() {
       setActiveAnswer(answers[index + 1]);
       setIndex(index + 1);
     }
+    if(!maintenance || !business) return;
+    questionsUpdateRequest(cookie.load('GC_JWT_AUTH'), maintenance, business, form)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Sucesso',
+          text: 'Resposta salva com sucesso',
+        });
+      });
   };
+
+  const handleFinish = () => {
+    if(!maintenance || !business) return;
+    maintenanceFinishRequest(cookie.load('GC_JWT_AUTH'), maintenance, maintenanceData)
+    .then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Sucesso',
+        text: 'Manutenção concluída',
+      });
+    });
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
@@ -125,19 +132,55 @@ function Answer() {
     'video': <FaRegFileVideo />,
     'application/pdf': <FaRegFilePdf />,
     'application/xml': <FaRegFileAlt />,
+  };
+
+  useEffect(() => {
+    const token = cookie.load('GC_JWT_AUTH');
+    if(!maintenance || !business) return;
+    maintenanceRequest(token, maintenance, business)
+      .then((data) => {
+        setMaintenanceData({ ...data.data });
+      });
+
+    questionsRequest(token, maintenance, business)
+      .then(({ data }) => {
+        const parsedData = data.data.map((item: IQuestion) => ({
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          date: item.date,
+          status: item.status,
+          observations: item.observations,
+          photos: [],
+          docs: [],
+        }));
+        console.log(parsedData);
+        setAnswers(parsedData);
+        setActiveAnswer(parsedData[0]);
+        setForm(parsedData[0]);
+        setIndex(0);
+      });
+  }, []);
+
+  if(answers.length === 0) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <HashLoader color="#0078d4" />
+      </div>
+    );
   }
 
   return (
     <div className="w-full h-full flex flex-col gap-12">
       <div>
         <h1 className="text-4xl font-bold">
-          Nome do Residencial
+          {maintenanceData.building}
         </h1>
       </div>
       <div className="flex items-start justify-stretch gap-8">
         <div className="flex flex-col justify-start gap-4 grow">
           <h2 className="text-blue-1 font-bold text-2xl text-nowrap">
-            Nome da Manutenção
+            {maintenanceData.name}
           </h2>
           <div className="flex flex-col gap-4">
             {answers.map((item, i) => (
@@ -145,7 +188,6 @@ function Answer() {
                 key={i}
                 className={`flex items-center gap-1cursor-pointer ${index === i && 'font-bold'}`}
                 onClick={() => {
-                  console.log(item);
                   setActiveAnswer(item);
                   setIndex(i);
                   setForm(item as IQuestion);
@@ -180,16 +222,14 @@ function Answer() {
             <Label text="Situação">
               <Select
                 name="date"
-                value={form.status}
+                value={form.status.toString()}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  setForm({ ...form, status: e.target.value });
+                  setForm({ ...form, status: e.target.value === 'true' });
                 }}
                 required
                 options={[
-                  { value: '0', label: 'Pendente' },
-                  { value: '1', label: 'Respondido' },
-                  { value: '2', label: 'Em andamento' },
-                  { value: '3', label: 'Cancelado' },
+                  { value: false, label: 'Pendente' },
+                  { value: true, label: 'Respondido' },
                 ]}
               />
             </Label>
@@ -247,7 +287,7 @@ function Answer() {
           </div>
           <div className="flex justify-end gap-4">
             <Button
-              disabled={!['1', '3', ''].includes(form.status) || !form.date || !form.observations}
+              disabled={!form.status || !form.date  || form.date === '0000-00-00' || !form.observations}
               text={
                 <span
                   className="inline-flex items-center gap-2 mt-1"
@@ -259,7 +299,7 @@ function Answer() {
               onClick={handleSave}
               customStyle="bg-red-1 text-white-1"
             />
-            {answers.every(item => !['1', '3', ''].includes(item.status)) && (
+            {answers.every(item => item.status) && (
               <Button
                 text={
                   <span
@@ -269,8 +309,8 @@ function Answer() {
                   </span>
                 }
                 type="button"
-                onClick={handleSave}
-                disabled={answers.every(item => !['1', '3', ''].includes(item.status))}
+                onClick={handleFinish}
+                disabled={answers.some(item => !item.status)}
                 customStyle="bg-red-1 text-white-1"
               />
             )}
@@ -281,4 +321,4 @@ function Answer() {
   )
 }
 
-export default Answer
+export default Answer;

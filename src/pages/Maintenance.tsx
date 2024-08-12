@@ -55,7 +55,7 @@ function Maintenance() {
       </h1>
       <Button
         type="button"
-        onClick={() => navigate('/buildings/create')}
+        onClick={() => navigate('/maintenance/create')}
         customStyle="!px-4 !py-1"
         text={(
           <span className="inline-flex items-center gap-2">
