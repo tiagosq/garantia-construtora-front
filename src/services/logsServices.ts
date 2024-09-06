@@ -24,7 +24,7 @@ export const logRequest = async (token: string, page = 1, limit = 25) => {
   return response.json();
 };
 
-export const logExport = async (token: string, page = 1, limit = 25) => {
+export const logExport = async (token: string, page = 1, limit = 1000) => {
   const response = await fetch(`${BASE_URL}/logs/export?page=${page}&limit=${limit}`, {
     method: 'GET',
     headers: {
@@ -33,4 +33,4 @@ export const logExport = async (token: string, page = 1, limit = 25) => {
     },
   });
   return response.blob();
-}
+};

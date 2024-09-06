@@ -6,7 +6,7 @@ export type IAttachment = {
 };
 
 export type IQuestion = {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   date: string;
@@ -26,3 +26,15 @@ export interface IMaintenance {
   building: string; // Add the 'building' property
   user: string;
 }
+
+export type IUser = {
+  id?: string;
+  fullname: string;
+  email: string;
+  password: string;
+  password_confirmation?: string;
+  business_id?: string;
+  role: string;
+  status: boolean;
+  business?: string;
+};

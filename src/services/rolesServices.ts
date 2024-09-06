@@ -21,7 +21,7 @@ export const roleSearchRequest = async (token: string, page = 1, limit = 25) => 
 };
 
 export const roleGetRequest = async (token: string, id: string) => {
-  const url = `${BASE_URL}/roles/${id}?id=${id}`;
+  const url = `${BASE_URL}/roles/${id}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {

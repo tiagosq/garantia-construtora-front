@@ -7,7 +7,7 @@ import Button from "../../components/Button";
 import { FaRegSave } from "react-icons/fa";
 import ErrorList from "../../components/ErrorList";
 import Swal from "sweetalert2";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 import { buildingCreateRequest, buildingGetRequest, buildingUpdateRequest } from "../../services/buildingsServices";
 import cookie from "react-cookies";
@@ -34,6 +34,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [form, setForm] = useState(defaultForm);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { target: { value, name } } = e;
@@ -70,7 +71,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
             text: 'Função cadastrada com sucesso.',
             icon: 'success',
           }).then(() => {
-            window.location.href = '/business';
+            navigate('/buildings');
           });
         }
       })
@@ -90,7 +91,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
             text: 'Função cadastrada com sucesso.',
             icon: 'success',
           }).then(() => {
-            window.location.href = '/business';
+            navigate('/buildings');
           });
         }
       })
@@ -133,7 +134,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
     <div className="w-full h-full max-w-[1000px]">
       <h1 className="mb-8 text-3xl font-bold text-blue-1">Cadastrar Novo Empreendimento</h1>
       <ErrorList errors={errors} />
-      <form className="w-full h-full flex flex-col gap-6" onSubmit={onSubmit}>
+      <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
         <div className="flex flex-wrap gap-4">
           <Label
             text="Nome do Empreendimento"
@@ -175,6 +176,8 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               value={form.phone}
               onChange={handleChange}
               placeholder="(00) 00000-0000"
+              mask="(00) 00000-0000"
+              showMask
               disabled={type === 'view'}
               required
             />
@@ -219,6 +222,8 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               value={form.cep}
               onChange={handleChange}
               placeholder="00000-000"
+              mask="00000-000"
+              showMask
               disabled={type === 'view'}
               required
             />
@@ -319,6 +324,8 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               type="date"
               value={form.constructionDate}
               placeholder="00/00/0000"
+              mask="00/00/0000"
+              showMask
               onChange={handleChange}
               disabled={type === 'view'}
               required
@@ -332,6 +339,8 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               name="deliveryDate"
               type="date"
               placeholder="00/00/0000"
+              mask="00/00/0000"
+              showMask
               value={form.deliveryDate}
               onChange={handleChange}
               disabled={type === 'view'}
@@ -346,6 +355,8 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               name="warrantyDate"
               type="date"
               placeholder="00/00/0000"
+              mask="00/00/0000"
+              showMask
               value={form.warrantyDate}
               onChange={handleChange}
               disabled={type === 'view'}

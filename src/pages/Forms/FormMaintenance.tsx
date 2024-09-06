@@ -111,7 +111,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
     <div className="w-full h-full max-w-[1000px]">
       <h1 className="mb-8 text-3xl font-bold text-blue-1">Cadastrar Nova Manutenção</h1>
       <ErrorList errors={errors} />
-      <form className="w-full h-full flex flex-col gap-6" onSubmit={onSubmit}>
+      <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
         <div className="flex flex-wrap gap-4">
           <Label
             text="Nome da Manutenção"
@@ -169,6 +169,8 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
               type="date"
               value={form.start_date}
               placeholder="00/00/0000"
+              mask="00/00/0000"
+              showMask
               onChange={handleChange}
               disabled={type === 'view'}
               required
@@ -182,6 +184,8 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
               name="end_date"
               type="date"
               placeholder="00/00/0000"
+              mask="00/00/0000"
+              showMask
               value={form.end_date}
               onChange={handleChange}
               disabled={type === 'view'}

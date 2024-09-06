@@ -22,7 +22,7 @@ function Select({ name, options, disabled, onChange, value, customStyle = '', re
       disabled={disabled}
     >
       {options.map((option) => (
-        <option key={option.value.toString()} value={option.value.toString()} className="dark:text-typo-primary">
+        <option key={`${name}-${option.value.toString()}`} value={option.value.toString()} className="dark:text-typo-primary">
           {option.label}
         </option>
       ))}

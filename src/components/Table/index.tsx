@@ -33,7 +33,7 @@ function Table({ headers, data, limit, page, sort, setLimit, setPage, setSort }:
     <div className="w-full">
       {data.data?.length > 0 ? (
       <div className="w-full flex flex-col justify-end items-end gap-4">
-        <div className="w-full">
+        <div className="w-full overflow-x-auto">
           <table className="w-full overflow-x-auto" width="100%">
             <thead className="bg-blue-2">
               <tr>
@@ -98,6 +98,7 @@ function Table({ headers, data, limit, page, sort, setLimit, setPage, setSort }:
             {Array.from({ length: data.last_page }, (_, i) => i + 1).map((item) => (
               <div className={`cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1
               ${page === item && 'brightness-125 saturate-150'}`}
+                key={`page-${item}`}
                 onClick={page !== item ? () => setPage(item) : undefined}
               >
                 {item}

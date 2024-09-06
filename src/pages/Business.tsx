@@ -94,7 +94,7 @@ function Business() {
   
 
   return (
-    <div className="w-full h-full flex flex-col gap-4">
+    <div className="w-full min-h-full flex flex-col gap-4">
       <div className="w-full flex flex-wrap justify-start items-end gap-4">
       <h1 className="text-3xl text-blue-1 font-bold">
         Empresas

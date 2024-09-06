@@ -8,7 +8,7 @@ import ErrorList from "../../components/ErrorList";
 import Swal from "sweetalert2";
 import { roleCreateRequest, roleGetRequest, roleUpdateRequest } from "../../services/rolesServices";
 import cookie from "react-cookies";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 
 type IForm = {
@@ -83,6 +83,7 @@ function FormRoles({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(id ? true : false);
   const [form, setForm] = useState<IForm>(defaultForm);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     const { target: { value, name } } = e;
@@ -145,7 +146,7 @@ function FormRoles({ type = 'view' }: { type?: 'view' | 'edit' }) {
             text: 'Função cadastrada com sucesso.',
             icon: 'success',
           }).then(() => {
-            window.location.href = '/roles';
+            navigate('/roles');
           });
         }
       })
@@ -165,7 +166,7 @@ function FormRoles({ type = 'view' }: { type?: 'view' | 'edit' }) {
             text: 'Função cadastrada com sucesso.',
             icon: 'success',
           }).then(() => {
-            window.location.href = '/roles';
+            navigate('/roles');
           });
         }
       })
@@ -236,7 +237,7 @@ function FormRoles({ type = 'view' }: { type?: 'view' | 'edit' }) {
       </h1>
       )}
       <ErrorList errors={errors} />
-      <form className="w-full h-full flex flex-col gap-6" onSubmit={onSubmit}>
+      <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
         <div className="flex flex-wrap gap-4">
           <Label
             text="Nome da Função"

@@ -7,7 +7,7 @@ import Button from "../../components/Button";
 import { FaRegSave } from "react-icons/fa";
 import ErrorList from "../../components/ErrorList";
 import Swal from "sweetalert2";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 import { businessCreateRequest, businessGetRequest, businessUpdateRequest } from "../../services/businessServices";
 import cookie from "react-cookies";
@@ -21,7 +21,6 @@ const defaultForm = {
   city: '',
   state: '',
   zip: '',
-  password: '',
   status: true,
 };
 
@@ -30,6 +29,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [form, setForm] = useState(defaultForm);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { target: { value, name } } = e;
@@ -48,10 +48,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
   };
 
   const validate = () => {
-    if (form.name === '' || form.email === '' || form.phone === '' || form.password === '' || form.cnpj === '') {
-      return true;
-    }
-    if(!form.password || form.password.length < 6) {
+    if (form.name === '' || form.email === '' || form.phone === '' || form.cnpj === '') {
       return true;
     }
     return false;
@@ -60,10 +57,11 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors = [];
-    if (!form.name  || !form.email || !form.phone || !form.password || !form.cnpj) {
+    if (!form.name  || !form.email || !form.phone || !form.cnpj) {
       errors.push('Preencha todos os campos obrigatórios');
     }
     setErrors(errors);
+    if(errors.length > 0) return;
     const token = cookie.load('GC_JWT_AUTH');
     if(!id) {
       businessCreateRequest(token, form)
@@ -74,7 +72,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
             text: 'Função cadastrada com sucesso.',
             icon: 'success',
           }).then(() => {
-            window.location.href = '/business';
+            navigate('/business');
           });
         }
       })
@@ -94,7 +92,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
             text: 'Função cadastrada com sucesso.',
             icon: 'success',
           }).then(() => {
-            window.location.href = '/business';
+            navigate('/business');
           });
         }
       })
@@ -134,7 +132,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
   }
 
   return (
-    <div className="w-full h-full max-w-[1000px]">
+    <div className="w-full max-w-[1000px]">
       {type === 'edit' ? (
       <h1 className="mb-8 text-3xl font-bold text-blue-1">
         {id ? 'Editar Empresa' : 'Cadastrar Nova Empresa'}
@@ -145,7 +143,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
       </h1>
       )}
       <ErrorList errors={errors} />
-      <form className="w-full h-full flex flex-col gap-6" onSubmit={onSubmit}>
+      <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
         <div className="flex flex-wrap gap-4">
           <Label
             text="Nome da Empresa"
@@ -170,6 +168,8 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
               name="cnpj"
               required
               placeholder="00.000.000/0000-00"
+              mask="00.000.000/0000-00"
+              showMask
               onChange={handleChange}
               value={form.cnpj}
               disabled={type === 'view'}
@@ -186,6 +186,8 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
               name="phone"
               required
               placeholder="(00) 00000-0000"
+              mask="(00) 00000-0000"
+              showMask
               onChange={handleChange}
               value={form.phone}
               disabled={type === 'view'}
@@ -230,6 +232,8 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
               type="text"
               name="zip"
               placeholder="00000-000"
+              mask="00000-000"
+              showMask
               onChange={handleChange}
               value={form.zip}
               disabled={type === 'view'}
@@ -286,22 +290,6 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
                 { value: 'SE', label: 'SE' },
                 { value: 'TO', label: 'TO' },
               ]}
-            />
-          </Label>
-        </div>
-        <div className="flex flex-wrap gap-4">
-          <Label
-            text="Senha"
-            customStyle="grow"
-          >
-            <Input
-              type="password"
-              name="password"
-              placeholder="Senha"
-              required
-              onChange={handleChange}
-              value={form.password}
-              disabled={type === 'view'}
             />
           </Label>
         </div>

@@ -6,7 +6,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { FaFileCsv } from "react-icons/fa";
 import Table from "../components/Table";
 import cookie from "react-cookies";
-import { logRequest } from "../services/logsServices";
+import { logExport, logRequest } from "../services/logsServices";
 import { HashLoader } from "react-spinners";
 
 function Logs() {
@@ -30,6 +30,20 @@ function Logs() {
       setIsLoading(false);
     });
   }, [page, limit, sort]);
+
+  const exportCSV = () => {
+    logExport(cookie.load('GC_JWT_AUTH'), page, limit).then(
+      (blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'logs.csv');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+    );
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -71,7 +85,7 @@ function Logs() {
           </span>
           }
           customStyle="!bg-green-600 !h-10 text-sm"
-          onClick={() => console.log(form)}
+          onClick={exportCSV}
         />
         <Button
           type="button"
@@ -82,7 +96,7 @@ function Logs() {
           </span>
           }
           customStyle="!bg-blue-2 !h-10 text-sm"
-          onClick={() => console.log(form)}
+          onClick={exportCSV}
         />
       </div>
       <div>

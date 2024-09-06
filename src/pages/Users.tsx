@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { formatPhoneNumber } from "../utils/format";
-import { userSearchRequest } from "../services/userServices";
+import { userDeleteRequest, userSearchRequest } from "../services/userServices";
 import cookie from "react-cookies";
 import { HashLoader } from "react-spinners";
 
@@ -54,10 +54,14 @@ function Business() {
             cancelButtonText: 'Cancelar',
           }).then((result) => {
             if (result.isConfirmed) {
-              Swal.fire({
-                title: 'Excluído!',
-                text: 'O registro foi excluído.',
-                icon: 'success',
+              userDeleteRequest(cookie.load('GC_JWT_AUTH'), id).then(() => {
+                const newData = data.data.filter((item) => item.id !== id);
+                setData({ ...data, data: newData });
+                Swal.fire({
+                  title: 'Excluído!',
+                  text: 'O registro foi excluído.',
+                  icon: 'success',
+                });
               });
             }
           })

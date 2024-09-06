@@ -7,17 +7,21 @@ import Button from "../../components/Button";
 import { FaRegSave } from "react-icons/fa";
 import ErrorList from "../../components/ErrorList";
 import Swal from "sweetalert2";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 import { userCreateRequest, userGetRequest, userUpdateRequest } from "../../services/userServices";
 import cookie from "react-cookies";
+import { roleSearchRequest } from "../../services/rolesServices";
+import { businessSearchRequest } from "../../services/businessServices";
 
 const defaultForm = {
-  name: '',
+  fullname: '',
   email: '',
   phone: '',
   password: '',
+  password_confirmation: '',
   role: '',
+  business_id: '',
   status: true,
 };
 
@@ -26,6 +30,25 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [form, setForm] = useState(defaultForm);
+  const [roles, setRoles] = useState([]);
+  const [businesses, setBusinesses] = useState([]);
+  const navigate = useNavigate();
+
+  const getRoles = () => {
+    const token = cookie.load('GC_JWT_AUTH');
+    roleSearchRequest(token)
+    .then((data) => {
+      setRoles(data.data.data);
+    });
+  };
+
+  const getBusiness = () => {
+    const token = cookie.load('GC_JWT_AUTH');
+    businessSearchRequest(token)
+    .then((data) => {
+      setBusinesses(data.data.data);
+    });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { target: { value, name } } = e;
@@ -44,10 +67,10 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
   };
 
   const validate = () => {
-    if (form.name === '' || form.email === '' || form.phone === '' || form.password === '' || form.role === '') {
+    if (form.fullname === '' || form.email === '' || form.phone === '' || form.password === '' || form.role === '') {
       return true;
     }
-    if(!form.password || form.password.length < 6) {
+    if((!form.password || form.password.length < 6) && (form.password !== form.password_confirmation)) {
       return true;
     }
     return false;
@@ -56,7 +79,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors = [];
-    if (!form.name) {
+    if (!form.fullname) {
       errors.push('Preencha todos os campos obrigatórios');
     }
     setErrors(errors);
@@ -70,7 +93,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
             text: 'Usuário cadastrada com sucesso.',
             icon: 'success',
           }).then(() => {
-            window.location.href = '/roles';
+            navigate('/users');
           });
         }
       })
@@ -90,7 +113,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
             text: 'Usuário cadastrado com sucesso.',
             icon: 'success',
           }).then(() => {
-            window.location.href = '/roles';
+            navigate('/users');
           });
         }
       })
@@ -105,15 +128,15 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
   };
 
   useEffect(() => {
+    getRoles();
+    getBusiness();
     if (id) {
       setIsLoading(true);
       const token = cookie.load('GC_JWT_AUTH');
       userGetRequest(token, id)
       .then((data) => {
-        const permissions = JSON.parse(data.data.permissions);
         setForm({
           ...data.data,
-          permissions,
         });
         setIsLoading(false);
       });
@@ -143,16 +166,16 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
       </h1>
       )}
       <ErrorList errors={errors} />
-      <form className="w-full h-full flex flex-col gap-6" onSubmit={onSubmit}>
+      <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
         <div className="flex flex-wrap gap-4">
           <Label
             text="Nome Completo"
             customStyle="grow"
           >
             <Input
-              name="name"
+              name="fullname"
               type="text"
-              value={form.name}
+              value={form.fullname}
               onChange={handleChange}
               placeholder="Nome Completo"
               disabled={type === 'view'}
@@ -185,22 +208,56 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
               value={form.phone}
               onChange={handleChange}
               placeholder="(00) 00000-0000"
+              mask="(00) 00000-0000"
+              showMask
               disabled={type === 'view'}
               required
             />
           </Label>
         </div>
+        {type === 'edit' && (
+          <div className="flex flex-wrap gap-4">
+            <Label
+              text="Senha"
+              customStyle="grow"
+            >
+              <Input
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Senha"
+                required
+              />
+            </Label>
+            <Label
+              text="Confirme a Senha"
+              customStyle="grow"
+            >
+              <Input
+                name="password_confirmation"
+                type="password"
+                value={form.password_confirmation}
+                onChange={handleChange}
+                placeholder="Senha"
+                required
+              />
+            </Label>
+          </div>
+        )}
         <div className="flex flex-wrap gap-4">
           <Label
-            text="Senha"
+            text="Construtora Vinculada"
             customStyle="grow"
           >
-            <Input
-              name="password"
-              type="password"
-              value={form.password}
+            <Select
+              name="business_id"
+              value={form.business_id}
               onChange={handleChange}
-              placeholder="Senha"
+              options={[
+                { value: '', label: 'Selecione uma opção' },
+                ...businesses.map((business: { id: string, name: string }) => ({ value: business.id ?? 0, label: business.name }))
+              ]}
               disabled={type === 'view'}
               required
             />
@@ -214,8 +271,8 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
               value={form.role}
               onChange={handleChange}
               options={[
-                { value: 'admin', label: 'Administrador' },
-                { value: 'user', label: 'Usuário' },
+                { value: '', label: 'Selecione uma opção' },
+                ...roles.map((role: { id: string, name: string }) => ({ value: role.id, label: role.name }))
               ]}
               disabled={type === 'view'}
               required

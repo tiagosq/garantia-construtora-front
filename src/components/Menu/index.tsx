@@ -6,8 +6,6 @@ import { MdAccessTime, MdAutoAwesomeMosaic, MdExitToApp, MdOutlineWbSunny } from
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import cookie from "react-cookies";
-import { getAuthData } from "../../services/authServices";
-import Swal from "sweetalert2";
 
 function Menu() {
   const [isOpen, setIsOpen] = useState(true);
@@ -20,18 +18,19 @@ function Menu() {
     if (!token) {
       navigate('/login');
     } else {
-      getAuthData(token)
-        .then(data => {
-          if(data.message === 'Unauthenticated.') {
-            cookie.remove('GC_JWT_AUTH');
-            navigate('/login');
-          }
-        }).catch(() => {
-          Swal.fire('Erro', 'Falha ao obter dados do usuário', 'error').then(() => {
-            cookie.remove('GC_JWT_AUTH');
-            navigate('/login');
-          });
-        });
+      // getAuthData(token)
+      //   .then(data => {
+      //     console.log(data);
+      //     if(data.message === 'Unauthenticated.') {
+      //       cookie.remove('GC_JWT_AUTH');
+      //       navigate('/login');
+      //     }
+      //   }).catch(() => {
+      //     Swal.fire('Erro', 'Falha ao obter dados do usuário', 'error').then(() => {
+      //       cookie.remove('GC_JWT_AUTH');
+      //       navigate('/login');
+      //     });
+      //   });
     }
   }, [navigate]);
 

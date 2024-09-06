@@ -1,14 +1,5 @@
+import { IUser } from '../types/types';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-type IUser = {
-  id?: string;
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-  status: boolean;
-  business?: string;
-};
 
 export const userSearchRequest = async (token: string, page = 1, limit = 25) => {
   const url = `${BASE_URL}/users?page=${page}&limit=${limit}`;
@@ -23,7 +14,7 @@ export const userSearchRequest = async (token: string, page = 1, limit = 25) => 
 };
 
 export const userGetRequest = async (token: string, id: string) => {
-  const url = `${BASE_URL}/roles/${id}?id=${id}`;
+  const url = `${BASE_URL}/users/${id}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -35,7 +26,7 @@ export const userGetRequest = async (token: string, id: string) => {
 };
 
 export const userCreateRequest = async (token: string, data: IUser) => {
-  const url = `${BASE_URL}/user`;
+  const url = `${BASE_URL}/users`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -48,7 +39,7 @@ export const userCreateRequest = async (token: string, data: IUser) => {
 };
 
 export const userUpdateRequest = async (token: string, data: IUser, id: string) => {
-  const url = `${BASE_URL}/user/${id}`;
+  const url = `${BASE_URL}/users/${id}`;
   const response = await fetch(url, {
     method: 'PUT',
     headers: {
@@ -61,7 +52,7 @@ export const userUpdateRequest = async (token: string, data: IUser, id: string) 
 };
 
 export const userDeleteRequest = async (token: string, id: string) => {
-  const url = `${BASE_URL}/user/${id}`;
+  const url = `${BASE_URL}/users/${id}`;
   const response = await fetch(url, {
     method: 'DELETE',
     headers: {

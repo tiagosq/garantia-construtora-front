@@ -1,3 +1,6 @@
+import React from 'react';
+import { IMaskInput } from 'react-imask';
+
 type IProps = {
   type: 'text' | 'password' | 'email' | 'number' | 'tel' | 'date' | 'file';
   name: string;
@@ -9,17 +12,21 @@ type IProps = {
   disabled?: boolean;
   autoComplete?: string;
   accept?: string;
+  mask?: string;
+  showMask?: boolean;
 }
 
 function Input({
-  type, name, value, placeholder, disabled, required = false, onChange, customStyle = '', autoComplete, accept }: IProps
+  type, name, value, placeholder, disabled, required = false, onChange, customStyle = '', autoComplete, accept, mask = '', showMask = false }: IProps
 ) {
   return (
-    <input
+    <IMaskInput
+      mask={mask}
+      unmask={showMask}
       type={type}
       name={name}
       value={value}
-      onChange={onChange}
+      onAccept={(value: unknown) => onChange({ target: { name, value } } as React.ChangeEvent<HTMLInputElement>)}
       className={`w-full max-h-10 border bg-primary font-normal rounded py-2 px-3 border-gray-400 ${customStyle}`}
       placeholder={placeholder}
       required={required}
@@ -27,7 +34,7 @@ function Input({
       autoComplete={autoComplete}
       accept={accept}
     />
-  )
+  );
 }
 
 export default Input;

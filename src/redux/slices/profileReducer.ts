@@ -5,6 +5,7 @@ const INITIAL_STATE = {
   theme: 'light',
   user: {
     role: '',
+    permissions: '',
     name: '',
     email: '',
   }
