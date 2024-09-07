@@ -55,3 +55,29 @@ export type IBuilding = {
   warrantyDate: string,
   status: boolean,
 };
+
+export type IUserData = {
+  data: {
+    id: string;
+    business: {
+      id: string;
+      name: string;
+    },
+    fullname: string;
+    email: string;
+    phone: string;
+    role: {
+      id: string;
+      name: string;
+      permissions: {
+        [key: string]: {
+          create: boolean;
+          read: boolean;
+          update: boolean;
+          delete: boolean;
+        };
+      };
+    }
+  };
+  message: string;
+};

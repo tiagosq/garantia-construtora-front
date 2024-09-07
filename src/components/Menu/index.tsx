@@ -4,37 +4,20 @@ import { FaClipboardUser, FaGear } from "react-icons/fa6";
 import { MdAccessTime, MdAutoAwesomeMosaic, MdExitToApp, MdOutlineWbSunny } from "react-icons/md";
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import cookie from "react-cookies";
 import { AppContext } from "../../context/AppContext";
 
 function Menu() {
-  const { isDark, toggleTheme, isOpen, toggleMenu } = useContext(AppContext);
+  const { isDark, toggleTheme, isOpen, toggleMenu, loadUserData, userData } = useContext(AppContext);
   const navigate = useNavigate();
 
+  const isManager = !userData?.data?.business?.id;
+
   useEffect(() => {
-    const token = cookie.load('GC_JWT_AUTH');
-    // Adicionar uma requisição aqui.
-    if (!token) {
-      navigate('/login');
-    } else {
-      // getAuthData(token)
-      //   .then(data => {
-      //     console.log(data);
-      //     if(data.message === 'Unauthenticated.') {
-      //       cookie.remove('GC_JWT_AUTH');
-      //       navigate('/login');
-      //     }
-      //   }).catch(() => {
-      //     Swal.fire('Erro', 'Falha ao obter dados do usuário', 'error').then(() => {
-      //       cookie.remove('GC_JWT_AUTH');
-      //       navigate('/login');
-      //     });
-      //   });
-    }
-  }, [navigate]);
+    loadUserData();
+  }, []);
 
   return (
-    <div className="w-full min-h-screen flex justify-between items-stretch relative">
+    <div className="w-full min-w-40 min-h-screen flex justify-between items-stretch relative">
       <nav className="min-h-full bg-blue-1 flex flex-col px-6 py-24 lg:relative fixed">
         <ul className="flex flex-col gap-4 text-primary dark:text-typo-primary relative-z-20">
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
@@ -43,46 +26,58 @@ function Menu() {
               {isOpen && <span className="text-lg">Início</span>}
             </Link>
           </li>
+          {!isManager && (
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/maintenance" className="flex gap-4 items-center justify-start">
               <FaRegCheckCircle className="text-2xl" />
               {isOpen && <span className="text-lg">Manutenções</span>}
             </Link>
           </li>
+          )}
+          {!isManager && (
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/buildings" className="flex gap-4 items-center justify-start">
               <PiBuildingApartmentFill className="text-2xl" />
               {isOpen && <span className="text-lg">Empreendimentos</span>}
             </Link>
           </li>
+          )}
+          {isManager && (
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/business" className="flex gap-4 items-center justify-start">
               <FaBriefcase className="text-2xl" />
-              {isOpen && <span className="text-lg">Empresa</span>}
+              {isOpen && <span className="text-lg">Empresas</span>}
             </Link>
           </li>
+          )}
+          {isManager && (
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/users" className="flex gap-4 items-center justify-start">
               <FaRegUserCircle className="text-2xl" />
               {isOpen && <span className="text-lg">Usuários</span>}
             </Link>
           </li>
+          )}
+          {isManager && (
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/roles" className="flex gap-4 items-center justify-start">
               <FaClipboardUser className="text-2xl" />
               {isOpen && <span className="text-lg">Funções</span>}
             </Link>
           </li>
+          )}
+          {isManager && (
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/logs" className="flex gap-4 items-center justify-start">
               <MdAccessTime className="text-2xl" />
               {isOpen && <span className="text-lg">Histórico</span>}
             </Link>
           </li>
+          )}
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">
             <Link to="/settings" className="flex gap-4 items-center justify-start">
               <FaGear className="text-2xl" />
-              {isOpen && <span className="text-lg">Configurações</span>}
+              {isOpen && <span className="text-lg">Perfil</span>}
             </Link>
           </li>
           <li className="cursor-pointer py-1 hover:pt-0 hover:pb-2 transition-all duration-150">

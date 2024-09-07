@@ -18,7 +18,6 @@ function Login() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked, type } = e.target;
-
     setForm({
       ...form,
       [name]: type === 'checkbox' ? checked : value,

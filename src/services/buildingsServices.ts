@@ -1,8 +1,8 @@
 import { IBuilding } from '../types/types';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-export const buildingSearchRequest = async (token: string, page = 1, limit = 25) => {
-  const url = `${BASE_URL}/buildings?page=${page}&limit=${limit}`;
+export const buildingSearchRequest = async (token: string, business: string, page = 1, limit = 25) => {
+  const url = `${BASE_URL}/buildings?business=${business}&page=${page}&limit=${limit}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -14,7 +14,7 @@ export const buildingSearchRequest = async (token: string, page = 1, limit = 25)
 };
 
 export const buildingGetRequest = async (token: string, id: string) => {
-  const url = `${BASE_URL}/buildings/${id}?id=${id}`;
+  const url = `${BASE_URL}/buildings/${id}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
