@@ -38,3 +38,20 @@ export type IUser = {
   status: boolean;
   business?: string;
 };
+
+export type IBuilding = {
+  name: string,
+  owner: string,
+  phone: string,
+  address: string,
+  number: string,
+  cep: string,
+  obs: string,
+  district: string,
+  city: string,
+  state: string,
+  constructionDate: string,
+  deliveryDate: string,
+  warrantyDate: string,
+  status: boolean,
+};

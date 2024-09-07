@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 import { businessCreateRequest, businessGetRequest, businessUpdateRequest } from "../../services/businessServices";
 import cookie from "react-cookies";
+import { getCEP, getCNPJ } from "../../services/brasilAPIServices";
 
 const defaultForm = {
   name: '',
@@ -29,6 +30,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [form, setForm] = useState(defaultForm);
+  let action = false;
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -37,6 +39,53 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
       ...form,
       [name]: value,
     });
+
+    if(name === 'cnpj' && value.length === 14 && !action) {
+      action = true;
+      getCNPJ(value)
+      .then((data) => {
+        setForm({
+          ...form,
+          name: data.nome_fantasia ?? form.name,
+          phone: data.ddd_telefone_1 ?? form.phone,
+          email: data.email ?? form.email,
+          address: data.logradouro ?? form.address,
+          zip: data.cep ?? form.zip,
+          city: data.municipio ?? form.city,
+          state: data.uf ?? form.state,
+        });
+        action = false;
+      })
+      .catch(() => {
+        Swal.fire({
+          title: 'Erro!',
+          text: 'CNPJ inválido.',
+          icon: 'error',
+        });
+        action = false;
+      });
+    }
+    if(name === 'zip' && value.length === 8 && !action) {
+      action = true;
+      getCEP(value)
+      .then((data) => {
+        setForm({
+          ...form,
+          city: data.city ?? form.city,
+          address: data.street ?? form.address,
+          state: data.uf ?? form.state,
+        });
+        action = false;
+      })
+      .catch(() => {
+        Swal.fire({
+          title: 'Erro!',
+          text: 'CEP inválido.',
+          icon: 'error',
+        });
+        action = false;
+      });
+    }
   };
 
   const handleClick = (e: React.ChangeEvent<HTMLInputElement>) => {

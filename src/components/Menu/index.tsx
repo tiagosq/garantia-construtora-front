@@ -1,15 +1,14 @@
-import { useLocalStorage } from "@uidotdev/usehooks";
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { FaAngleLeft, FaAngleRight, FaBriefcase, FaRegCheckCircle, FaRegMoon, FaRegUserCircle } from "react-icons/fa";
 import { FaClipboardUser, FaGear } from "react-icons/fa6";
 import { MdAccessTime, MdAutoAwesomeMosaic, MdExitToApp, MdOutlineWbSunny } from "react-icons/md";
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import cookie from "react-cookies";
+import { AppContext } from "../../context/AppContext";
 
 function Menu() {
-  const [isOpen, setIsOpen] = useState(true);
-  const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'dark');
+  const { isDark, toggleTheme, isOpen, toggleMenu } = useContext(AppContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,7 +94,7 @@ function Menu() {
         </ul>
         <div
           className="absolute bottom-10 -right-10 z-10 text-white-1 text-2xl bg-blue-2 p-2 rounded-tr-md rounded-br-md"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={toggleMenu}
         >
           {isOpen ? <FaAngleLeft /> : <FaAngleRight />}
         </div>
@@ -104,9 +103,9 @@ function Menu() {
         <div className="w-full flex justify-end">
           <div
             className="text-blue-2 text-xl cursor-pointer p-2 hover:pt-0 hover:pb-4 transition-all duration-150"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={toggleTheme}
           >
-            {theme === 'dark' ? (<FaRegMoon />) : (<MdOutlineWbSunny />)}
+            {isDark ? (<FaRegMoon />) : (<MdOutlineWbSunny />)}
           </div>
           <div
             className="text-blue-2 text-xl cursor-pointer p-2 hover:pt-0 hover:pb-4 transition-all duration-150"

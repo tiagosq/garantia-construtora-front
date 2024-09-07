@@ -1,21 +1,5 @@
+import { IBuilding } from '../types/types';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-type IBuilding = {
-  name: string,
-  owner: string,
-  phone: string,
-  address: string,
-  number: string,
-  cep: string,
-  obs: string,
-  district: string,
-  city: string,
-  uf: string,
-  constructionDate: string,
-  deliveryDate: string,
-  warrantyDate: string,
-  status: boolean,
-};
 
 export const buildingSearchRequest = async (token: string, page = 1, limit = 25) => {
   const url = `${BASE_URL}/buildings?page=${page}&limit=${limit}`;

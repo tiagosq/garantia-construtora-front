@@ -1,22 +1,22 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import './App.css';
 import AppRouter from './AppRouter';
-import { useLocalStorage } from '@uidotdev/usehooks';
+import { AppContext } from './context/AppContext';
 
 function App() {
-  const [theme] = useLocalStorage<'light' | 'dark'>('theme', 'dark');
+  const { isDark } = useContext(AppContext);
 
   useEffect(() => {
     const swalStyle = document.querySelector('#swal-theme');
-    if (theme === 'dark') {
+    if (isDark) {
       swalStyle?.setAttribute('href', 'https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark/dark.css');
     } else {
       swalStyle?.setAttribute('href', 'https://cdn.jsdelivr.net/npm/@sweetalert2/theme-default/default.css');
     }
-  }, [theme]);
+  }, [isDark]);
   
   return (
-    <div className={theme}>
+    <div className={isDark ? 'dark' : 'light'}>
       <AppRouter />
     </div>
   )

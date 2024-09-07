@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 import { buildingCreateRequest, buildingGetRequest, buildingUpdateRequest } from "../../services/buildingsServices";
 import cookie from "react-cookies";
+import { getCEP } from "../../services/brasilAPIServices";
 
 const defaultForm = {
   name: '',
@@ -22,7 +23,7 @@ const defaultForm = {
   obs: '',
   district: '',
   city: '',
-  uf: '',
+  state: '',
   constructionDate: '',
   deliveryDate: '',
   warrantyDate: '',
@@ -42,6 +43,26 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
       ...form,
       [name]: value,
     });
+
+    if(name === 'zip' && value.length === 8) {
+      getCEP(value)
+      .then((data) => {
+        setForm({
+          ...form,
+          city: data.city ?? '',
+          address: data.street ?? '',
+          district: data.neighborhood ?? '',
+          state: data.uf ?? '',
+        });
+      })
+      .catch(() => {
+        Swal.fire({
+          title: 'Erro!',
+          text: 'CEP inválido.',
+          icon: 'error',
+        });
+      });
+    }
   };
 
   const handleClick = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,8 +298,8 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
             customStyle="grow"
           >
             <Select
-              name="uf"
-              value={form.uf}
+              name="state"
+              value={form.state}
               onChange={handleChange}
               disabled={type === 'view'}
               options={[
