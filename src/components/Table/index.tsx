@@ -28,7 +28,7 @@ type IProps = {
 
 function Table({ headers, data, limit, page, sort, setLimit, setPage, setSort }: IProps) {
   const dateColumns = ['created_at', 'updated_at', 'deleted_at'];
-
+  console.log(data);
   return (
     <div className="w-full">
       {data.data?.length > 0 ? (

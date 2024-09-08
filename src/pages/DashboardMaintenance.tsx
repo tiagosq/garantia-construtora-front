@@ -41,16 +41,18 @@ function DashboardMaintenance() {
         <FaArrowLeft className="text-2xl text-blue-1" /> Voltar
       </div>
       <div className="flex gap-2 items-center">
-        <Button
-          type="button"
-          onClick={() => navigate('/business/create')}
-          customStyle="!px-4 !py-1"
-          text={(
-            <span className="inline-flex items-center gap-2">
-              Editar
-            </span>
-          )}
-        />
+        {!maintenance?.is_completed && (
+          <Button
+            type="button"
+            onClick={() => navigate('/business/create')}
+            customStyle="!px-4 !py-1"
+            text={(
+              <span className="inline-flex items-center gap-2">
+                Editar
+              </span>
+            )}
+          />
+        )}
         <h1 className="text-4xl text-typo-primary"> 
           <span className="text-blue-1 font-bold">
             { maintenance?.name || '' }
@@ -70,7 +72,7 @@ function DashboardMaintenance() {
             {questions.length > 0 ? questions.map((maintenance, i) => (
               <Collapse key={i} title={maintenance.name} observation={maintenance.observation} status={maintenance.status} description={maintenance.description} />
             )) : (
-              <p className="text-typo-primary dark:text-typo-primary">Nenhuma manutenção ou conferência agendada.</p>
+              <p className="text-typo-primary dark:text-typo-primary">Sem tópicos nesta manutenção.</p>
             )}
           </div>
         ) : (

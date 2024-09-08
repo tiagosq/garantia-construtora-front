@@ -14,7 +14,8 @@ import { AppContext } from "../context/AppContext";
 
 function Maintenance() {
   const [form, setForm] = useState<{ name: string; }>({ name: '' });
-  const [isLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState({ data: [], last_page: 0 });
   const navigate = useNavigate();  
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
@@ -22,10 +23,19 @@ function Maintenance() {
   const { userData } = useContext(AppContext);
 
   useEffect(() => {
+    setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
     if(!userData?.data?.business?.id) return;
-    maintenanceGetRequest(token, userData.data.business.id,)
-  });
+    maintenanceGetRequest(token, userData.data.business.id)
+      .then((data) => {
+        console.log(data);
+        setData({
+          data: data.data,
+          last_page: data.last_page,
+        });
+        setIsLoading(false);
+      });
+  }, [page, limit, sort]);
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -75,16 +85,14 @@ function Maintenance() {
         ) : (
           <Table
             headers={[
-              { name: 'Usuário', column: 'user', sortable: true },
-              { name: 'Data', column: 'date', sortable: true },
-              { name: 'Ação', column: 'action' },
+              { name: 'Empreendimento', column: 'building', sortable: true },
+              { name: 'Nome', column: 'name', sortable: true },
+              { name: 'Data de Início', column: 'start_date', sortable: true },
+              { name: 'Data de Fim', column: 'end_date', sortable: true },
               { name: 'Status', column: 'status' },
               { name: 'Ações', column: 'actions' },
             ]}
-            data={{
-              last_page: 1,
-              data: [],
-            }}
+            data={data}
             limit={limit}
             page={page}
             sort={sort}

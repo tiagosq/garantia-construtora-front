@@ -31,7 +31,11 @@ export const questionsUpdateRequest = async (token: string, maintenance: string,
 };
 
 export const maintenanceGetRequest = async (token: string, business: string, building: string) => {
-  const response = await fetch(`${BASE_URL}/maintenances?business=${business}&building=${building}`, {
+  let url = `${BASE_URL}/maintenances?business=${business}`;
+  if(building) {
+    url += `&building=${building}`;
+  }
+  const response = await fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
