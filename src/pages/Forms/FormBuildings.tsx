@@ -16,19 +16,20 @@ import { AppContext } from "../../context/AppContext";
 
 const defaultForm = {
   name: '',
-  owner: '',
-  phone: '',
   address: '',
-  number: '',
-  cep: '',
-  obs: '',
-  district: '',
   city: '',
   state: '',
-  constructionDate: '',
-  deliveryDate: '',
-  warrantyDate: '',
-  status: true,
+  zip: '',
+  manager_name: '',
+  phone: '',
+  email: '',
+  site: '',
+  business: '',
+  owner: '',
+  construction_date: '',
+  delivered_date: '',
+  warranty_date: '',
+  status: true
 };
 
 function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
@@ -146,6 +147,14 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
     }
   }, [id]);
 
+  useEffect(() => {
+    setForm({
+      ...form,
+      business: userData?.data?.business?.id ?? '',
+      owner: userData?.data?.id ?? '',
+    })
+  }, [userData]);
+
   if(id && isLoading) {
     return (
       <div className="w-full h-[50vh] flex justify-center items-center">
@@ -181,12 +190,11 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
             customStyle="grow-[4]"
           >
             <Input
-              name="owner"
+              name="manager_name"
               type="text"
-              value={form.owner}
+              value={form.manager_name}
               onChange={handleChange}
               placeholder="Nome do Responsável"
-              required
               disabled={type === 'view'}              
             />
           </Label>
@@ -203,7 +211,21 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               mask="(00) 00000-0000"
               showMask
               disabled={type === 'view'}
-              required
+            />
+          </Label>
+          <Label
+            text="E-mail do Responsável"
+            customStyle="grow"
+          >
+            <Input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="contato@garantiaconstrutora.com.br"
+              mask="contato@garantiaconstrutora.com.br"
+              showMask
+              disabled={type === 'view'}
             />
           </Label>
         </div>
@@ -222,62 +244,20 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               required
             />
           </Label>
-          <Label
-            text="Número"
-            customStyle="grow"
-          >
-            <Input
-              name="number"
-              type="text"
-              value={form.number}
-              onChange={handleChange}
-              placeholder="0000"
-              disabled={type === 'view'}
-              required
-            />
-          </Label>
+        </div>
+        <div className="flex flex-wrap gap-4">
           <Label
             text="CEP"
             customStyle="grow"
           >
             <Input
-              name="cep"
+              name="zip"
               type="text"
-              value={form.cep}
+              value={form.zip}
               onChange={handleChange}
               placeholder="00000-000"
               mask="00000-000"
               showMask
-              disabled={type === 'view'}
-              required
-            />
-          </Label>
-        </div>
-        <div className="flex flex-wrap gap-4">
-          <Label
-            text="Complemento"
-            customStyle="grow-[4]"
-          >
-            <Input
-              name="obs"
-              type="text"
-              value={form.obs}
-              onChange={handleChange}
-              placeholder="Complemento"
-              disabled={type === 'view'}
-              required
-            />
-          </Label>
-          <Label
-            text="Bairro"
-            customStyle="grow-[2]"
-          >
-            <Input
-              name="district"
-              type="text"
-              value={form.district}
-              onChange={handleChange}
-              placeholder="Bairro"
               disabled={type === 'view'}
               required
             />

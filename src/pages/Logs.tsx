@@ -80,17 +80,6 @@ function Logs() {
           type="button"
           text={
           <span className="inline-flex items-center gap-1 mt-px">
-            <FaFileCsv className="text-xl" />
-            Gerar CSV
-          </span>
-          }
-          customStyle="!bg-green-600 !h-10 text-sm"
-          onClick={exportCSV}
-        />
-        <Button
-          type="button"
-          text={
-          <span className="inline-flex items-center gap-1 mt-px">
             <IoSearchOutline className="text-xl" />
             Pesquisar
           </span>

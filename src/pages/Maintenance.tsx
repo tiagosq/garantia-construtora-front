@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
@@ -8,6 +8,9 @@ import Table from "../components/Table";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { HashLoader } from "react-spinners";
+import { maintenanceGetRequest } from "../services/maintenanceServices";
+import cookie from "react-cookies";
+import { AppContext } from "../context/AppContext";
 
 function Maintenance() {
   const [form, setForm] = useState<{ name: string; }>({ name: '' });
@@ -16,6 +19,13 @@ function Maintenance() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
   const [sort, setSort] = useState({ column: '', order: ''});
+  const { userData } = useContext(AppContext);
+
+  useEffect(() => {
+    const token = cookie.load('GC_JWT_AUTH');
+    if(!userData?.data?.business?.id) return;
+    maintenanceGetRequest(token, userData.data.business.id,)
+  });
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -45,17 +55,6 @@ function Maintenance() {
             value={form.name}
           />
         </Label>
-        <Button
-          type="button"
-          text={
-          <span className="inline-flex items-center gap-1 mt-px">
-            <FaFileCsv className="text-xl" />
-            Gerar CSV
-          </span>
-          }
-          customStyle="!bg-green-600 !h-10 text-sm"
-          onClick={() => console.log(form)}
-        />
         <Button
           type="button"
           text={
