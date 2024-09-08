@@ -24,7 +24,7 @@ function Card({ building }: IProps) {
   } */
 
   return (
-    <Link to={`/dashboard/${building.id}/`}>
+    <Link to={`/dashboard/building/${building.id}/`}>
       <div className={`flex flex-col gap-6 min-w-72 text-white-2 px-4 py-3 my-2
       transition-all duration-150 hover:mt-0 hover:mb-4 rounded-md ${classColor}`}>
         <div>

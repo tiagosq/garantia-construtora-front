@@ -81,3 +81,32 @@ export type IUserData = {
   };
   message: string;
 };
+
+export type IMaintenanceData = {
+  id: string,
+  name: string,
+  description: string,
+  start_date: string,
+  end_date: string,
+  is_completed: string,
+  is_approved: string,
+  building: string,
+  user: string,
+  business: string,
+  created_at: string,
+  updated_at: string,
+};
+
+export type IQuestionData = {
+  id: string,
+  name: string,
+  description: string,
+  date: string,
+  status: string,
+  observation?: string,
+  maintenance: string,
+  business: string,
+  created_at: string,
+  updated_at: string,
+  attachments?: IAttachment[],
+};

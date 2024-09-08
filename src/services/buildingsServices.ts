@@ -13,8 +13,8 @@ export const buildingSearchRequest = async (token: string, business: string, pag
   return response.json();
 };
 
-export const buildingGetRequest = async (token: string, id: string) => {
-  const url = `${BASE_URL}/buildings/${id}`;
+export const buildingGetRequest = async (token: string, id: string, business: string) => {
+  const url = `${BASE_URL}/buildings/${id}?business=${business}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {

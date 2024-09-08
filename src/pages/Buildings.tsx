@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
@@ -11,6 +11,7 @@ import { FaPlus } from "react-icons/fa6";
 import { HashLoader } from "react-spinners";
 import cookie from "react-cookies";
 import { buildingDeleteRequest, buildingSearchRequest } from "../services/buildingsServices";
+import { AppContext } from "../context/AppContext";
 
 function Buildings() {
   const [form, setForm] = useState<{ name: string; }>({ name: '' });
@@ -25,6 +26,7 @@ function Buildings() {
       [key: string]: string | number | React.ReactNode; 
     }[] 
   }>({ last_page: 0, data: [] });
+  const { userData } = useContext(AppContext);
 
   const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
@@ -84,7 +86,8 @@ function Buildings() {
   useEffect(() => {
     setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
-    buildingSearchRequest(token, page, limit).then((data) => {
+    if(!userData?.data?.business?.id) return;
+    buildingSearchRequest(token, userData.data.business.id, page, limit).then((data) => {
       setData(data.data);
       setIsLoading(false);
     });

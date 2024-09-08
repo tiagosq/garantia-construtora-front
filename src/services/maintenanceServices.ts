@@ -30,6 +30,17 @@ export const questionsUpdateRequest = async (token: string, maintenance: string,
 
 };
 
+export const maintenanceGetRequest = async (token: string, business: string, building: string) => {
+  const response = await fetch(`${BASE_URL}/maintenances?business=${business}&building=${building}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  return response.json();
+};
+
 export const maintenanceRequest = async (token: string, maintenance: string, business: string) => {
   const response = await fetch(`${BASE_URL}/maintenances/${maintenance}?business=${business}`, {
     method: 'GET',

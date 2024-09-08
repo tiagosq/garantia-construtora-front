@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../../components/Input";
 import Label from "../../components/Label";
 import Select from "../../components/Select";
@@ -12,6 +12,7 @@ import { HashLoader } from "react-spinners";
 import { buildingCreateRequest, buildingGetRequest, buildingUpdateRequest } from "../../services/buildingsServices";
 import cookie from "react-cookies";
 import { getCEP } from "../../services/brasilAPIServices";
+import { AppContext } from "../../context/AppContext";
 
 const defaultForm = {
   name: '',
@@ -36,6 +37,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [errors, setErrors] = useState<string[]>([]);
   const [form, setForm] = useState(defaultForm);
   const navigate = useNavigate();
+  const { userData } = useContext(AppContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { target: { value, name } } = e;
@@ -129,8 +131,9 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
   useEffect(() => {
     if (id) {
       setIsLoading(true);
+      if(!userData?.data?.business?.id) return;
       const token = cookie.load('GC_JWT_AUTH');
-      buildingGetRequest(token, id)
+      buildingGetRequest(token, id, userData.data.business.id)
       .then((data) => {
         setForm({
           ...data.data

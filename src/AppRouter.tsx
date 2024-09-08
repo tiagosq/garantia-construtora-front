@@ -19,6 +19,8 @@ import FormRoles from './pages/Forms/FormRoles'
 import FormBusiness from './pages/Forms/FormBusiness'
 import FormMaintenance from './pages/Forms/FormMaintenance'
 import Answer from './pages/Answer'
+import DashboardBuildings from './pages/DashboardBuildings'
+import DashboardMaintenance from './pages/DashboardMaintenance'
 
 function AppRouter() {
   return (
@@ -29,6 +31,8 @@ function AppRouter() {
       <Route path={`/reset-password`} element={<Navigate to="/login" />} />
       <Route path={`/reset-password/:hash`} element={<ResetPassword />} />
       <Route element={<Menu />}>
+        <Route path="/dashboard/maintenance/:id" element={<DashboardMaintenance />} />
+        <Route path="/dashboard/building/:id" element={<DashboardBuildings />} />
         <Route path="/dashboard" index element={<Dashboard />} />
 
         <Route path="/business" element={<Business />} />
