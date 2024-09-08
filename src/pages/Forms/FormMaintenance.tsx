@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../../components/Input";
 import Label from "../../components/Label";
 import Select from "../../components/Select";
@@ -10,6 +10,9 @@ import Swal from "sweetalert2";
 import TextArea from "../../components/TextArea";
 import { useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
+import { buildingSearchRequest } from "../../services/buildingsServices";
+import cookie from "react-cookies";
+import { AppContext } from "../../context/AppContext";
 
 type IForm = {
   name: string;
@@ -28,6 +31,8 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const { id } = useParams();
   const [isLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
+  const [buildings, setBuildings] = useState<{ id: string; name: string; }[]>([]);
+  const { userData } = useContext(AppContext);
   const [form, setForm] = useState<IForm>({
     name: '',
     description: '',
@@ -38,6 +43,24 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
     status: true,
   });
 
+  useEffect(() => {
+    if(id) {
+      // fetch maintenance data
+      // fetch questions data
+    }
+  }, [id]);
+
+  useEffect(() => {
+    // fetch buildings data
+    const token = cookie.load('GC_JWT_AUTH');
+    if(userData?.data?.business?.id) {
+      buildingSearchRequest(token, userData.data.business.id)
+      .then((res) => {
+        setBuildings([{ id: '', name: 'Selecione um empreendimento' }, ...res.data.data]);
+      });
+    }
+  }, [userData]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     const { target: { value, name } } = e;
     setForm({
@@ -45,6 +68,23 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
       [name]: value,
     });
   };
+
+  const handleChangeQuestion = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>, index: number) => {
+    const { target: { value, name } } = e;
+    const newQuestions = form.questions.map((question, i) => {
+      if(i === index) {
+        return {
+          ...question,
+          [name]: value,
+        };
+      }
+      return question;
+    });
+    setForm({
+      ...form,
+      questions: newQuestions,
+    });
+  }
 
   const handleClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name } = e.currentTarget;
@@ -55,6 +95,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
   };
 
   const validate = () => {
+    console.log(form);
     if (!form.name || !form.description || !form.building || !form.start_date || !form.end_date) {
       return true;
     }
@@ -136,10 +177,10 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
               value={form.building}
               onChange={handleChange}
               disabled={type === 'view'}
-              options={[
-                { value: '1', label: 'Empreendimento 1' },
-                { value: '2', label: 'Empreendimento 2' },
-              ]}
+              options={buildings.length > 0 ? buildings.map((building: { id: string, name: string }) => ({
+                value: building.id,
+                label: building.name
+              })) : [{ value: '', label: 'Nenhum empreendimento encontrado' }]}
               required
             />
           </Label>
@@ -213,7 +254,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
         </div>
         {form.questions.map((question, index) => (
           <div key={index} className="flex flex-wrap flex-col gap-2">
-            <p>
+            <p className="text-typo-primary">
               <b>{`Questão ${index + 1}`}</b>
               <FaTrashAlt
                 className="inline-block ml-2 mb-1 text-red-500 cursor-pointer"
@@ -226,18 +267,18 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
               />
             </p>
             <Input
-              name={`question-${index}-name`}
+              name="name"
               type="text"
               value={question.name}
-              onChange={handleChange}
+              onChange={(e) => handleChangeQuestion(e, index)}
               placeholder={`Nome da Questão ${index + 1}`}
               disabled={type === 'view'}
               required
             />
             <TextArea
-              name={`question-${index}-description`}
+              name="description"
               value={question.description}
-              onChange={handleChange}
+              onChange={(e) => handleChangeQuestion(e, index)}
               placeholder={`Descrição da Questão ${index + 1}`}
               disabled={type === 'view'}
               required
