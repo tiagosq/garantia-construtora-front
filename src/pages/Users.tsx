@@ -3,7 +3,7 @@ import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
 import { IoSearchOutline } from "react-icons/io5";
-import { FaFileCsv, FaRegEdit, FaRegFile, FaRegTrashAlt } from "react-icons/fa";
+import { FaRegEdit, FaRegFile, FaRegTrashAlt } from "react-icons/fa";
 import Table from "../components/Table";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";

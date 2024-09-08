@@ -30,7 +30,7 @@ export const questionsUpdateRequest = async (token: string, maintenance: string,
 
 };
 
-export const maintenanceGetRequest = async (token: string, business: string, building: string) => {
+export const maintenanceGetRequest = async (token: string, business: string, building: string = '') => {
   let url = `${BASE_URL}/maintenances?business=${business}`;
   if(building) {
     url += `&building=${building}`;

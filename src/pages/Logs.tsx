@@ -3,7 +3,6 @@ import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
 import { IoSearchOutline } from "react-icons/io5";
-import { FaFileCsv } from "react-icons/fa";
 import Table from "../components/Table";
 import cookie from "react-cookies";
 import { logExport, logRequest } from "../services/logsServices";

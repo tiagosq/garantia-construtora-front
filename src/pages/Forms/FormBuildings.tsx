@@ -54,7 +54,6 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           ...form,
           city: data.city ?? '',
           address: data.street ?? '',
-          district: data.neighborhood ?? '',
           state: data.uf ?? '',
         });
       })
@@ -81,7 +80,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors = [];
-    if (!form.name  || !form.constructionDate || !form.deliveryDate || !form.warrantyDate) {
+    if (!form.name  || !form.construction_date || !form.delivered_date || !form.warranty_date) {
       errors.push('Preencha todos os campos obrigatórios');
     }
     setErrors(errors);
@@ -326,7 +325,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
             <Input
               name="constructionDate"
               type="date"
-              value={form.constructionDate}
+              value={form.construction_date}
               placeholder="00/00/0000"
               mask="00/00/0000"
               showMask
@@ -345,7 +344,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               placeholder="00/00/0000"
               mask="00/00/0000"
               showMask
-              value={form.deliveryDate}
+              value={form.delivered_date}
               onChange={handleChange}
               disabled={type === 'view'}
               required
@@ -361,7 +360,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               placeholder="00/00/0000"
               mask="00/00/0000"
               showMask
-              value={form.warrantyDate}
+              value={form.warranty_date}
               onChange={handleChange}
               disabled={type === 'view'}
               required
