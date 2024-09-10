@@ -5,13 +5,12 @@ type IProps = {
   title: string;
   status: string;
   description?: string;
-  observation?: string;
+  observations?: string;
   attachments?: string[];
 }
 
-function Collapse({ title, description, observation, status, attachments }: IProps) {
+function Collapse({ title, description, observations, status, attachments }: IProps) {
   const [toggle, setToggle] = useState(false);
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center gap-2">
@@ -32,10 +31,10 @@ function Collapse({ title, description, observation, status, attachments }: IPro
             <p className="text-typo-primary text-sm">{description}</p>
           </>
         )}
-        {observation && (
+        {observations && (
           <>
             <h3 className="font-bold text-blue-1">Resposta:</h3>
-            <p className="text-typo-primary text-sm">{observation}</p>
+            <p className="text-typo-primary text-sm">{observations}</p>
           </>
         )}
         {attachments && attachments.length > 0 && (

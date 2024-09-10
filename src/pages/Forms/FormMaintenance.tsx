@@ -8,12 +8,12 @@ import { FaRegSave, FaTrashAlt } from "react-icons/fa";
 import ErrorList from "../../components/ErrorList";
 import Swal from "sweetalert2";
 import TextArea from "../../components/TextArea";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 import { buildingSearchRequest } from "../../services/buildingsServices";
 import cookie from "react-cookies";
 import { AppContext } from "../../context/AppContext";
-import { maintenanceCreateRequest } from "../../services/maintenanceServices";
+import { maintenanceCreateRequest, questionsCreateRequest } from "../../services/maintenanceServices";
 
 type IForm = {
   name: string;
@@ -34,6 +34,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [errors, setErrors] = useState<string[]>([]);
   const [buildings, setBuildings] = useState<{ id: string; name: string; }[]>([]);
   const { userData } = useContext(AppContext);
+  const navigate = useNavigate();
   const [form, setForm] = useState<IForm>({
     name: '',
     description: '',
@@ -135,11 +136,17 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
         business: userData.data.business.id,
       };
       maintenanceCreateRequest(cookie.load('GC_JWT_AUTH'), body)
-        .then(() => {
-          Swal.fire({
-            title: 'Sucesso!',
-            text: 'Manutenção cadastrada com sucesso.',
-            icon: 'success',
+        .then((data) => {
+          const maintenance = data.data.id;
+          questionsCreateRequest(cookie.load('GC_JWT_AUTH'), maintenance, userData.data.business.id, form.questions)
+          .then(() => {
+            Swal.fire({
+              title: 'Sucesso!',
+              text: 'Manutenção cadastrada com sucesso.',
+              icon: 'success',
+            }).then(() => {
+              navigate('/maintenance');
+            });
           });
         })
         .catch(() => {

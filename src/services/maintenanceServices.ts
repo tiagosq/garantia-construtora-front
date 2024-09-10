@@ -13,6 +13,27 @@ export const questionsRequest = async (token: string, maintenance: string, busin
   return response.json();
 };
 
+export const questionsCreateRequest = async (token: string, maintenance: string, business: string, data: IQuestion[]) => {
+  const requests = data.map((item) => {
+    return fetch(`${BASE_URL}/questions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        ...item,
+        business,
+        maintenance,
+        observations: '',
+        status: 0,
+        date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+      })
+    });
+  });
+  return Promise.all(requests);        
+};
+
 export const questionsUpdateRequest = async (token: string, maintenance: string, business: string, data: IQuestion) => {
   const response = await fetch(`${BASE_URL}/questions/${data.id}`, {
     method: 'PUT',

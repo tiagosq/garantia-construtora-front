@@ -44,7 +44,7 @@ function DashboardMaintenance() {
       {!maintenance?.is_approved && (
         <Button
           type="button"
-          onClick={() => navigate('/business/create')}
+          onClick={() => navigate(`/maintenance/${id}/edit`)}
           customStyle="!px-3 !py-1 text-sm"
           text={(
             <span className="inline-flex items-center gap-2">
@@ -84,7 +84,7 @@ function DashboardMaintenance() {
         {!isLoading ? (
           <div className="flex flex-col flex-wrap gap-4 divide-x-px divide-gray-600">
             {questions.length > 0 ? questions.map((maintenance, i) => (
-              <Collapse key={i} title={maintenance.name} observation={maintenance.observation} status={maintenance.status} description={maintenance.description} />
+              <Collapse key={i} title={maintenance.name} observations={maintenance.observations} status={maintenance.status} description={maintenance.description} />
             )) : (
               <p className="text-typo-primary dark:text-typo-primary">Sem tópicos nesta manutenção.</p>
             )}

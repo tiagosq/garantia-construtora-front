@@ -105,13 +105,13 @@ function Answer() {
 
     setForm({
       ...form,
-      photos: [...form.photos, ...photos.map(file => ({
+      photos: [...(form.photos || []), ...photos.map(file => ({
         name: file.name,
         type: file.type,
         size: file.size,
         url: URL.createObjectURL(file)
       }))],
-      docs: [...form.docs, ...docs.map(file => ({
+      docs: [...(form.docs ?? []), ...docs.map(file => ({
         name: file.name,
         type: file.type,
         size: file.size,
@@ -154,7 +154,6 @@ function Answer() {
           photos: [],
           docs: [],
         }));
-        console.log(parsedData);
         setAnswers(parsedData);
         setActiveAnswer(parsedData[0]);
         setForm(parsedData[0]);
@@ -173,7 +172,7 @@ function Answer() {
   return (
     <div className="w-full h-full flex flex-col gap-12">
       <div>
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-4xl font-bold text-typo-primary">
           {maintenanceData.building}
         </h1>
       </div>
@@ -186,7 +185,7 @@ function Answer() {
             {answers.map((item, i) => (
               <h3
                 key={i}
-                className={`flex items-center gap-1cursor-pointer ${index === i && 'font-bold'}`}
+                className={`flex items-center gap-1 text-typo-primary cursor-pointer ${index === i && 'font-bold'}`}
                 onClick={() => {
                   setActiveAnswer(item);
                   setIndex(i);
@@ -203,7 +202,7 @@ function Answer() {
           <h3 className="text-blue-1 font-bold text-2xl mb-4">
             {activeAnswer.name}
           </h3>
-          <p className="text-sm">
+          <p className="text-sm text-typo-primary">
             {activeAnswer.description}
           </p>
           <div className="flex gap-8 items-baseline">
@@ -211,7 +210,7 @@ function Answer() {
               <Input
                 type="date"
                 name="date"
-                value={form.date}
+                value={form?.date ?? ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setForm({ ...form, date: e.target.value });
                 }}
@@ -222,7 +221,7 @@ function Answer() {
             <Label text="Situação">
               <Select
                 name="date"
-                value={form.status.toString()}
+                value={form.status?.toString() ?? '0'}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                   setForm({ ...form, status: e.target.value === 'true' });
                 }}
@@ -238,7 +237,7 @@ function Answer() {
             <Label text="Observações">
               <TextArea
                 name="observations"
-                value={form.observations}
+                value={form.observations ?? ''}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                   setForm({ ...form, observations: e.target.value });
                 }}
@@ -251,7 +250,7 @@ function Answer() {
             className="flex items-start gap-4"
           >
             <div className="flex flex-col grow max-w-[50%]">
-              <p className="font-bold">Fotos e Vídeos</p>
+              <p className="font-bold text-typo-primary">Fotos e Vídeos</p>
               <FileInput
                 name="photos"
                 text="Anexar Arquivos"
@@ -260,7 +259,7 @@ function Answer() {
                 onChange={handleFileChange}
               />
               <div className="grid-cols-2 gap-4 grid mt-1">
-                {form.photos.map((file, i) => (
+                {form.photos && form.photos.map((file, i) => (
                   <div key={i} className="flex">
                     {iconFiles[file.type]}<p className="text-sm">{`${file.name.slice(0, 15)}${file.name.length > 15 && '...'}`}</p>
                   </div>
@@ -268,7 +267,7 @@ function Answer() {
               </div>
             </div>
             <div className="flex flex-col grow max-w-[50%]">
-              <p className="font-bold">Notas e Documentos</p>
+              <p className="font-bold text-typo-primary">Notas e Documentos</p>
               <FileInput
                 name="docs"
                 text="Anexar Arquivos"
@@ -277,7 +276,7 @@ function Answer() {
                 onChange={handleFileChange}
               />
               <div className="grid-cols-2 gap-4 grid mt-1">
-                {form.docs.map((file, i) => (
+                {form.docs && form.docs.map((file, i) => (
                   <div key={i} className="flex">
                     {iconFiles[file.type]}<p className="text-sm">{`${file.name.slice(0, 15)}${file.name.length > 15 && '...'}`}</p>
                   </div>

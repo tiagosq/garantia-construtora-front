@@ -9,11 +9,11 @@ export type IQuestion = {
   id?: string;
   name: string;
   description: string;
-  date: string;
-  status: boolean;
-  observations: string;
-  photos: IAttachment[];
-  docs: IAttachment[];
+  date?: string;
+  status?: boolean;
+  observations?: string;
+  photos?: IAttachment[];
+  docs?: IAttachment[];
 };
 
 export interface IMaintenance {
@@ -105,7 +105,7 @@ export type IQuestionData = {
   description: string,
   date: string,
   status: string,
-  observation?: string,
+  observations?: string,
   maintenance: string,
   business: string,
   created_at: string,
