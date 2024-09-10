@@ -33,7 +33,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const loadUserData = () => {
     getAuthData(cookie.load('GC_JWT_AUTH'))
       .then((res) => {
-        console.log(res);
         setUserData(res);
       })
       .catch(() => {

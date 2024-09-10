@@ -1,7 +1,6 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const loginRequest = async (email: string, password: string) => {
-  console.log(BASE_URL)
   const response = await fetch(`${BASE_URL}/auth/login`, {
     method: 'POST',
     headers: {

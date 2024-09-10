@@ -95,7 +95,6 @@ function Answer() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
-    console.log(files);
     const photos = files.filter(file => 
         file.type.startsWith('image/') || file.type.startsWith('video/')
     );

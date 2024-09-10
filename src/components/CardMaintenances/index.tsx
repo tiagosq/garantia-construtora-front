@@ -24,7 +24,6 @@ function CardMaintenances({ maintenance }: IProps) {
     classColor = 'bg-green-600';
   }
 
-  console.log(maintenance);
   return (
     <Link to={`/dashboard/maintenance/${maintenance.id}/`}>
       <div className={`flex flex-col gap-6 min-w-72 text-white-2 px-4 py-3 my-2

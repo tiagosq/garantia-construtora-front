@@ -97,7 +97,6 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
   };
 
   const validate = () => {
-    console.log(form);
     if (!form.name || !form.description || !form.building || !form.start_date || !form.end_date) {
       return true;
     }
