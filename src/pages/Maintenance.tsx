@@ -7,9 +7,12 @@ import Table from "../components/Table";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { HashLoader } from "react-spinners";
-import { maintenanceGetRequest } from "../services/maintenanceServices";
+import { maintenanceDeleteRequest, maintenanceGetRequest } from "../services/maintenanceServices";
 import cookie from "react-cookies";
 import { AppContext } from "../context/AppContext";
+import { IMaintenance } from "../types/types";
+import Swal from "sweetalert2";
+import { FaRegEdit, FaRegFile, FaRegTrashAlt } from "react-icons/fa";
 
 function Maintenance() {
   const [form, setForm] = useState<{ name: string; }>({ name: '' });
@@ -21,16 +24,66 @@ function Maintenance() {
   const [sort, setSort] = useState({ column: '', order: ''});
   const { userData } = useContext(AppContext);
 
+  const actions = (id: string) => (
+    <div className="inline-flex gap-2 items-center">
+      <FaRegFile onClick={() => navigate(`/dashboard/maintenance/${id}`)} />
+      <FaRegEdit onClick={() => navigate(`/maintenance/${id}/edit`)} />
+      <FaRegTrashAlt
+        className="text-red-600" 
+        onClick={
+          () => Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Esta ação não poderá ser desfeita!', 
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#CC3333',
+            cancelButtonColor: '#333',
+            confirmButtonText: 'Excluir',
+            cancelButtonText: 'Cancelar',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              maintenanceDeleteRequest(cookie.load('GC_JWT_AUTH'), id).then(() => {
+                Swal.fire({
+                  title: 'Excluído!',
+                  text: 'O registro foi excluído.',
+                  icon: 'success',
+                }).then(() => {
+                  setData({
+                    last_page: data.last_page,
+                    data: data.data.filter((item: IMaintenance) => item.id !== id)
+                  });
+                }).catch(() => {
+                  Swal.fire({
+                    title: 'Erro!',
+                    text: 'Ocorreu um erro ao excluir o registro.',
+                    icon: 'error',
+                  });
+                });
+              });
+            }
+          })
+        } 
+      />
+    </div>
+  );
+
   useEffect(() => {
     setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
     if(!userData?.data?.business?.id) return;
     maintenanceGetRequest(token, userData.data.business.id)
       .then((data) => {
-        console.log(data);
         setData({
-          data: data.data,
-          last_page: data.last_page,
+          data: data.data.data.map((item: IMaintenance) => (
+            { 
+              ...item,
+              status: item.is_completed ? 'Concluído' : 'Pendente',
+              start_date: new Date(item.start_date).toLocaleDateString(),
+              end_date: new Date(item.end_date).toLocaleDateString(),
+              actions: actions(item.id as string),
+            }
+          )),
+          last_page: data.data.last_page,
         });
         setIsLoading(false);
       });

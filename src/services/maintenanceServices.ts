@@ -71,3 +71,38 @@ export const maintenanceFinishRequest = async (token: string, maintenance: strin
   });
   return response.json();
 }
+
+export const maintenanceCreateRequest = async (token: string, data: IMaintenance) => {
+  const response = await fetch(`${BASE_URL}/maintenances`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+}
+
+export const maintenanceUpdateRequest = async (token: string, data: IMaintenance, id: string) => {
+  const response = await fetch(`${BASE_URL}/maintenances/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ id, ...data }),
+  });
+  return response.json();
+}
+
+export const maintenanceDeleteRequest = async (token: string, maintenance: string) => {
+  const response = await fetch(`${BASE_URL}/maintenances/${maintenance}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  return response.json();
+}

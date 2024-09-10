@@ -17,14 +17,16 @@ export type IQuestion = {
 };
 
 export interface IMaintenance {
+  id?: string;
   name: string;
   description: string;
   start_date: string;
   end_date: string;
-  is_completed: boolean;
+  is_completed?: boolean;
+  is_approved?: boolean;
   business: string;
   building: string; // Add the 'building' property
-  user: string;
+  user?: string;
 }
 
 export type IUser = {
@@ -88,13 +90,13 @@ export type IMaintenanceData = {
   description: string,
   start_date: string,
   end_date: string,
-  is_completed: string,
-  is_approved: string,
+  is_completed?: string,
+  is_approved?: string,
   building: string,
-  user: string,
+  user?: string,
   business: string,
-  created_at: string,
-  updated_at: string,
+  created_at?: string,
+  updated_at?: string,
 };
 
 export type IQuestionData = {

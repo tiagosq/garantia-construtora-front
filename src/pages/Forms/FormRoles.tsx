@@ -242,6 +242,7 @@ function FormRoles({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Nome da Função"
             customStyle="grow"
+            required
           >
             <Input
               name="name"
@@ -257,7 +258,7 @@ function FormRoles({ type = 'view' }: { type?: 'view' | 'edit' }) {
         <div className="flex flex-wrap gap-4">
           <Checkbox
             checked={form.status}
-            name="active"
+            name="status"
             label="Função Ativa"
             disabled={type === 'view'}
             onChange={handleClick}

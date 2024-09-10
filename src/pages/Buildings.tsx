@@ -74,7 +74,6 @@ function Buildings() {
   const parsedData = {
     last_page: data.last_page,
     data: data.data.map((item) => {
-      console.log(item);
       return {
         ...item,
         status: item.status ? 'Ativo' : 'Inativo',

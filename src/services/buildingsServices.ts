@@ -46,7 +46,7 @@ export const buildingUpdateRequest = async (token: string, data: IBuilding, id: 
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ id, ...data }),
   });
   return response.json();
 };

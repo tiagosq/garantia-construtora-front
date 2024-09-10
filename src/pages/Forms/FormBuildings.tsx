@@ -52,6 +52,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
       .then((data) => {
         setForm({
           ...form,
+          zip: value ?? '',
           city: data.city ?? '',
           address: data.street ?? '',
           state: data.uf ?? '',
@@ -91,7 +92,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
         if (data.data) {
           Swal.fire({
             title: 'Sucesso!',
-            text: 'Função cadastrada com sucesso.',
+            text: 'Empreendimento cadastrado com sucesso.',
             icon: 'success',
           }).then(() => {
             navigate('/buildings');
@@ -111,7 +112,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
         if (data.data) {
           Swal.fire({
             title: 'Sucesso!',
-            text: 'Função cadastrada com sucesso.',
+            text: 'Empreendimento atualizado com sucesso.',
             icon: 'success',
           }).then(() => {
             navigate('/buildings');
@@ -135,8 +136,13 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
       const token = cookie.load('GC_JWT_AUTH');
       buildingGetRequest(token, id, userData.data.business.id)
       .then((data) => {
+        data.data.construction_date = new Date(data.data.construction_date).toISOString().split('T')[0];
+        data.data.delivered_date = new Date(data.data.delivered_date).toISOString().split('T')[0];
+        data.data.warranty_date = new Date(data.data.warranty_date).toISOString().split('T')[0];
+        delete data.data.owner;
         setForm({
-          ...data.data
+          ...data.data,
+          business: userData?.data?.business?.id ?? '',
         });
         setIsLoading(false);
       });
@@ -151,7 +157,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
       ...form,
       business: userData?.data?.business?.id ?? '',
       owner: userData?.data?.id ?? '',
-    })
+    });
   }, [userData]);
 
   if(id && isLoading) {
@@ -171,6 +177,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Nome do Empreendimento"
             customStyle="grow"
+            required
           >
             <Input
               name="name"
@@ -232,6 +239,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Endereço do Empreendimento"
             customStyle="grow-[5]"
+            required
           >
             <Input
               name="address"
@@ -248,6 +256,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="CEP"
             customStyle="grow"
+            required
           >
             <Input
               name="zip"
@@ -264,6 +273,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Cidade"
             customStyle="grow-[2]"
+            required
           >
             <Input
               name="city"
@@ -278,6 +288,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="UF"
             customStyle="grow"
+            required
           >
             <Select
               name="state"
@@ -285,6 +296,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
               onChange={handleChange}
               disabled={type === 'view'}
               options={[
+                { label: 'Selecione o Estado', value: '' },
                 { label: 'AC', value: 'AC'},
                 { label: 'AL', value: 'AL' },
                 { label: 'AP', value: 'AP' },
@@ -321,9 +333,10 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Início da Construção"
             customStyle="grow"
+            required
           >
             <Input
-              name="constructionDate"
+              name="construction_date"
               type="date"
               value={form.construction_date}
               placeholder="00/00/0000"
@@ -337,9 +350,10 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Data da Entrega"
             customStyle="grow"
+            required
           >
             <Input
-              name="deliveryDate"
+              name="delivered_date"
               type="date"
               placeholder="00/00/0000"
               mask="00/00/0000"
@@ -353,9 +367,10 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Fim da Garantia"
             customStyle="grow"
+            required
           >
             <Input
-              name="warrantyDate"
+              name="warranty_date"
               type="date"
               placeholder="00/00/0000"
               mask="00/00/0000"
@@ -370,7 +385,7 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
         <div className="flex flex-wrap gap-4">
           <Checkbox
             checked={form.status}
-            name="active"
+            name="status"
             label="Empreendimento Ativo"
             disabled={type === 'view'}
             onChange={handleClick}

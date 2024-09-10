@@ -197,6 +197,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Nome da Empresa"
             customStyle="grow"
+            required
           >
             <Input
               type="text"
@@ -211,6 +212,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="CNPJ"
             customStyle="grow"
+            required
           >
             <Input
               type="text"
@@ -229,6 +231,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Telefone"
             customStyle="grow"
+            required
           >
             <Input
               type="text"
@@ -245,6 +248,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="E-mail"
             customStyle="grow"
+            required
           >
             <Input
               type="email"
@@ -311,6 +315,7 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
               onChange={handleChange}
               disabled={type === 'view'}
               options={[
+                { value: '', label: 'Selecione um estado' },
                 { value: 'AC', label: 'AC' },
                 { value: 'AL', label: 'AL' },
                 { value: 'AP', label: 'AP' },

@@ -37,22 +37,36 @@ function DashboardMaintenance() {
 
   return (
     <div className="w-full h-full">
-      <div onClick={() => navigate(-1)} className="flex items-center gap-2 text-blue-1 cursor-pointer mb-4">
+      <div onClick={() => navigate(-1)} className="flex items-center gap-2 text-blue-1 cursor-pointer">
         <FaArrowLeft className="text-2xl text-blue-1" /> Voltar
       </div>
+      <div className="flex gap-2 items-center mt-4 mb-3">
+      {!maintenance?.is_approved && (
+        <Button
+          type="button"
+          onClick={() => navigate('/business/create')}
+          customStyle="!px-3 !py-1 text-sm"
+          text={(
+            <span className="inline-flex items-center gap-2">
+              Editar
+            </span>
+          )}
+        />
+      )}
+      {!maintenance?.is_completed && (
+        <Button
+          type="button"
+          onClick={() => navigate(`/maintenance/${userData?.data?.business?.id}/${id}`)}
+          customStyle="!px-3 !py-1 text-sm"
+          text={(
+            <span className="inline-flex items-center gap-2">
+              Preencher
+            </span>
+          )}
+        />
+      )}
+      </div>
       <div className="flex gap-2 items-center">
-        {!maintenance?.is_completed && (
-          <Button
-            type="button"
-            onClick={() => navigate('/business/create')}
-            customStyle="!px-4 !py-1"
-            text={(
-              <span className="inline-flex items-center gap-2">
-                Editar
-              </span>
-            )}
-          />
-        )}
         <h1 className="text-4xl text-typo-primary"> 
           <span className="text-blue-1 font-bold">
             { maintenance?.name || '' }

@@ -171,6 +171,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Nome Completo"
             customStyle="grow"
+            required
           >
             <Input
               name="fullname"
@@ -187,6 +188,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="E-mail"
             customStyle="grow"
+            required
           >
             <Input
               name="email"
@@ -201,6 +203,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Telefone de Contato"
             customStyle="grow"
+            required
           >
             <Input
               name="phone"
@@ -220,6 +223,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
             <Label
               text="Senha"
               customStyle="grow"
+              required
             >
               <Input
                 name="password"
@@ -233,6 +237,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
             <Label
               text="Confirme a Senha"
               customStyle="grow"
+              required
             >
               <Input
                 name="password_confirmation"
@@ -249,6 +254,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Construtora Vinculada"
             customStyle="grow"
+            required
           >
             <Select
               name="business_id"
@@ -265,6 +271,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Nível de Permissão (Função)"
             customStyle="grow"
+            required
           >
             <Select
               name="role"

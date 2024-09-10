@@ -13,6 +13,7 @@ import { HashLoader } from "react-spinners";
 import { buildingSearchRequest } from "../../services/buildingsServices";
 import cookie from "react-cookies";
 import { AppContext } from "../../context/AppContext";
+import { maintenanceCreateRequest } from "../../services/maintenanceServices";
 
 type IForm = {
   name: string;
@@ -122,11 +123,32 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
     }
     setErrors(errors);
     if(errors.length === 0) {
-      Swal.fire({
-        title: 'Sucesso!',
-        text: 'Empreendimento cadastrado com sucesso.',
-        icon: 'success',
-      });
+      const body = {
+        name: form.name,
+        description: form.description,
+        building: form.building,
+        start_date: form.start_date,
+        end_date: form.end_date,
+        status: form.status,
+        is_completed: false,
+        is_approved: false,
+        business: userData.data.business.id,
+      };
+      maintenanceCreateRequest(cookie.load('GC_JWT_AUTH'), body)
+        .then(() => {
+          Swal.fire({
+            title: 'Sucesso!',
+            text: 'Manutenção cadastrada com sucesso.',
+            icon: 'success',
+          });
+        })
+        .catch(() => {
+          Swal.fire({
+            title: 'Erro!',
+            text: 'Ocorreu um erro ao cadastrar a manutenção.',
+            icon: 'error',
+          });
+        });
     }
   };
 
@@ -157,6 +179,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Nome da Manutenção"
             customStyle="grow"
+            required
           >
             <Input
               name="name"
@@ -171,6 +194,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Empreendimento"
             customStyle="grow"
+            required
           >
             <Select
               name="building"
@@ -189,6 +213,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Descrição"
             customStyle="grow"
+            required
           >
             <TextArea
               name="description"
@@ -204,6 +229,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Início da Manutenção"
             customStyle="grow"
+            required
           >
             <Input
               name="start_date"
@@ -220,6 +246,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
           <Label
             text="Prazo Final"
             customStyle="grow"
+            required
           >
             <Input
               name="end_date"
@@ -237,7 +264,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
         <div className="flex flex-wrap gap-4">
           <Checkbox
             checked={form.status}
-            name="active"
+            name="status"
             label="Manutenção Ativa"
             disabled={type === 'view'}
             onChange={handleClick}
