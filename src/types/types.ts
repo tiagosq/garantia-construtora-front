@@ -10,10 +10,10 @@ export type IQuestion = {
   name: string;
   description: string;
   date?: string;
-  status?: boolean;
+  status?: boolean | number;
   observations?: string;
-  photos?: IAttachment[];
-  docs?: IAttachment[];
+  photos?: IAttachment[] | unknown[];
+  docs?: IAttachment[] | unknown[];
 };
 
 export interface IMaintenance {

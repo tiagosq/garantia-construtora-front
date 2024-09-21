@@ -116,28 +116,23 @@ function Answer() {
         console.error('Error finishing maintenance:', error);
       });
   };
+
   // Função para lidar com mudança de arquivo
-const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files ? Array.from(e.target.files) : [];
-
-  // Filtrando as fotos e vídeos
-  const photos = files.filter(file =>
-    file.type.startsWith('image/') || file.type.startsWith('video/')
-  );
-
-  // Filtrando os documentos (PDF e XML)
-  const docs = files.filter(file =>
-    file.type === 'application/pdf' || file.type === 'application/xml'
-  );
-
-  // Atualizando o estado com os novos arquivos
-  // @ts-expect-error 123
-  setForm(prevForm => ({
-    ...prevForm,
-    photos: [...(prevForm.photos || []), ...photos], // Adiciona arquivos File diretamente
-    docs: [...(prevForm.docs || []), ...docs], // Adiciona arquivos File diretamente
-  }));
-};
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const files = e.target.files[0];
+    if(files.type.includes('image') || files.type.includes('video')) {
+      setForm({
+        ...form,
+        photos: [...(form.photos || []), files],
+      });
+    } else {
+      setForm({
+        ...form,
+        docs: [...(form.docs || []), files],
+      });
+    }
+  };
 
   const iconStatus = [
     <MdOutlineCircle className="mb-0.5" />,
@@ -292,7 +287,11 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               <div className="grid-cols-1 gap-4 grid mt-1">
                 {form.photos && form.photos.map((file, i) => (
                   <div key={i} className="flex gap-1">
-                    {iconFiles[file.type] || iconFiles['application/txt']}
+                    {
+                      // @ts-expect-error - Não é possível garantir que a chave exista
+                      iconFiles[file.type] || iconFiles['application/txt']
+                    }
+                    {/* @ts-expect-error - Não é possível garantir que a chave exista */}
                     <p className="text-sm">{`${file.name.slice(0, 20)}`}</p>
                     <FaTrashAlt className="cursor-pointer text-red-600" onClick={() => {
                       if(!form.photos) return;
@@ -315,7 +314,9 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               <div className="grid-cols-1 gap-4 grid mt-1">
                 {form.docs && form.docs.map((file, i) => (
                   <div key={i} className="flex gap-1">
+                    {/* @ts-expect-error - Não é possível garantir que a chave exista */}
                     {iconFiles[file.type] || iconFiles['application/txt']}
+                    {/* @ts-expect-error - Não é possível garantir que a chave exista */}
                     <p className="text-sm">{`${file.name.slice(0, 20)}`}</p>
                     <FaTrashAlt className="cursor-pointer text-red-600" onClick={() => {
                       if(!form.docs) return;

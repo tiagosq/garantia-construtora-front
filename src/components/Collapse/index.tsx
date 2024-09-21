@@ -1,16 +1,37 @@
 import { useState } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaRegFileAlt, FaRegFileImage, FaRegFilePdf, FaRegFileVideo } from "react-icons/fa";
+import { IAttachment } from "../../types/types";
 
 type IProps = {
   title: string;
   status: string;
   description?: string;
   observations?: string;
-  attachments?: string[];
+  attachments?: IAttachment[];
 }
 
 function Collapse({ title, description, observations, status, attachments }: IProps) {
   const [toggle, setToggle] = useState(false);
+
+  const iconFiles: { [key: string]: JSX.Element } = {
+    'image/png': <FaRegFileImage />,
+    'image/jpg': <FaRegFileImage />,
+    'image/jpeg': <FaRegFileImage />,
+    'image/gif': <FaRegFileImage />,
+    'image/svg': <FaRegFileImage />,
+    'video/mp4': <FaRegFileVideo />,
+    'video/avi': <FaRegFileVideo />,
+    'video/mov': <FaRegFileVideo />,
+    'application/pdf': <FaRegFilePdf />,
+    'application/xml': <FaRegFileAlt />,
+    'application/json': <FaRegFileAlt />,
+    'application/doc': <FaRegFileAlt />,
+    'application/docx': <FaRegFileAlt />,
+    'application/xls': <FaRegFileAlt />,
+    'application/xlsx': <FaRegFileAlt />,
+    'application/txt': <FaRegFileAlt />,
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center gap-2">
@@ -42,7 +63,10 @@ function Collapse({ title, description, observations, status, attachments }: IPr
             <h3 className="font-bold text-blue-1">Anexos:</h3>
             <div className="flex gap-2">
               {attachments.map((attachment, i) => (
-                <a key={i} href={attachment} target="_blank" rel="noreferrer" className="text-blue-1 hover:underline">{attachment}</a>
+                <a key={i} href={attachment.url} target="_blank" rel="noreferrer" className="flex gap-px items-baseline hover:underline">
+                  {iconFiles[attachment.type] || iconFiles['application/txt']}
+                  {attachment.name}
+                </a>
               ))}
             </div>
           </>

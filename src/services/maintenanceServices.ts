@@ -53,17 +53,34 @@ export const questionsUpdateRequest = async (token: string, maintenance: string,
 };
 export const questionsAnswerRequest = async (token: string, maintenance: string, business: string, data: IQuestion) => {
   // Faz a requisição PUT com o FormData
+  const formData = new FormData();
+
+  [...data.photos || [], ...data.docs || []].forEach((item, index) => {
+    // @ts-expect-error - Não é possível garantir que a chave exista
+    formData.append(`attachments_to_add[${index}]`, item);
+  });
+
+  delete data.photos;
+  delete data.docs;
+  data.status = 1;
+
+  Object.keys(data).forEach((key) => {
+    // @ts-expect-error - Não é possível garantir que a chave exista
+    if(data[key]) {
+      // @ts-expect-error - Não é possível garantir que a chave exista
+      formData.append(key, data[key]);
+    }
+  });
+
+  formData.append('business', business);
+  formData.append('maintenance', maintenance);
+
   const response = await fetch(`${BASE_URL}/questions/${data.id}`, {
-    method: 'PUT',
+    method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify({
-      ...data,
-      business,
-      maintenance,
-    })
+    body: formData,
   });
 
   return response.json();
