@@ -4,13 +4,13 @@ import Input from "../components/Input";
 import Select from "../components/Select";
 import TextArea from "../components/TextArea";
 import Button from "../components/Button";
-import { FaRegFileAlt, FaRegFileImage, FaRegFilePdf, FaRegFileVideo, FaRegSave } from "react-icons/fa";
+import { FaRegFileAlt, FaRegFileImage, FaRegFilePdf, FaRegFileVideo, FaRegSave, FaTrashAlt } from "react-icons/fa";
 import { MdBlock, MdOutlineCheckCircle, MdOutlineCircle } from "react-icons/md";
 import FileInput from "../components/FileInput";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import cookie from 'react-cookies';
-import { maintenanceFinishRequest, maintenanceRequest, questionsRequest, questionsUpdateRequest } from "../services/maintenanceServices";
+import { maintenanceFinishRequest, maintenanceRequest, questionsAnswerRequest, questionsRequest } from "../services/maintenanceServices";
 import { HashLoader } from "react-spinners";
 import { IMaintenance, IQuestion } from "../types/types";
 
@@ -36,8 +36,8 @@ function Answer() {
     date: '',
     status: false,
     observations: '',
-    photos: [],
-    docs: [],
+    photos: [] as File[],
+    docs: [] as File[],
   };
 
   const [answers, setAnswers] = useState<IQuestion[]>([] as IQuestion[]);
@@ -51,73 +51,92 @@ function Answer() {
     end_date: '',
     is_completed: false,
     business: '',
+    building_name: '',
     building: '', // Add the 'building' property
     user: '',
   });
 
   const handleSave = () => {
+    if (!maintenance || !business) return;
+  
     const newAnswers = answers.map((item, idx) => {
       if (idx === index) {
         return {
           ...item,
           ...form,
-        }
+        };
       }
       return item;
     });
     setAnswers(newAnswers as IQuestion[]);
+  
     if (index < answers.length - 1) {
       setActiveAnswer(answers[index + 1]);
       setIndex(index + 1);
     }
-    if(!maintenance || !business) return;
-    questionsUpdateRequest(cookie.load('GC_JWT_AUTH'), maintenance, business, form)
+  
+    console.log('Form Data:', form);
+  
+    questionsAnswerRequest(cookie.load('GC_JWT_AUTH'), maintenance, business, form)
       .then(() => {
         Swal.fire({
           icon: 'success',
           title: 'Sucesso',
           text: 'Resposta salva com sucesso',
         });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Houve um problema ao salvar a resposta.',
+        });
+        console.error('Error saving response:', error);
       });
   };
-
+  
   const handleFinish = () => {
-    if(!maintenance || !business) return;
+    if (!maintenance || !business) return;
+  
     maintenanceFinishRequest(cookie.load('GC_JWT_AUTH'), maintenance, maintenanceData)
-    .then(() => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Sucesso',
-        text: 'Manutenção concluída',
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Sucesso',
+          text: 'Manutenção concluída',
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Houve um problema ao concluir a manutenção.',
+        });
+        console.error('Error finishing maintenance:', error);
       });
-    });
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    const photos = files.filter(file => 
-        file.type.startsWith('image/') || file.type.startsWith('video/')
-    );
-    const docs = files.filter(file => 
-        file.type.startsWith('application/pdf') || file.type.startsWith('application/xml')
-    );
-
-    setForm({
-      ...form,
-      photos: [...(form.photos || []), ...photos.map(file => ({
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        url: URL.createObjectURL(file)
-      }))],
-      docs: [...(form.docs ?? []), ...docs.map(file => ({
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        url: URL.createObjectURL(file)
-      }))],
-    })
   };
+  // Função para lidar com mudança de arquivo
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files ? Array.from(e.target.files) : [];
+
+  // Filtrando as fotos e vídeos
+  const photos = files.filter(file =>
+    file.type.startsWith('image/') || file.type.startsWith('video/')
+  );
+
+  // Filtrando os documentos (PDF e XML)
+  const docs = files.filter(file =>
+    file.type === 'application/pdf' || file.type === 'application/xml'
+  );
+
+  // Atualizando o estado com os novos arquivos
+  // @ts-expect-error 123
+  setForm(prevForm => ({
+    ...prevForm,
+    photos: [...(prevForm.photos || []), ...photos], // Adiciona arquivos File diretamente
+    docs: [...(prevForm.docs || []), ...docs], // Adiciona arquivos File diretamente
+  }));
+};
 
   const iconStatus = [
     <MdOutlineCircle className="mb-0.5" />,
@@ -127,10 +146,22 @@ function Answer() {
   ];
 
   const iconFiles: { [key: string]: JSX.Element } = {
-    'image': <FaRegFileImage />,
-    'video': <FaRegFileVideo />,
+    'image/png': <FaRegFileImage />,
+    'image/jpg': <FaRegFileImage />,
+    'image/jpeg': <FaRegFileImage />,
+    'image/gif': <FaRegFileImage />,
+    'image/svg': <FaRegFileImage />,
+    'video/mp4': <FaRegFileVideo />,
+    'video/avi': <FaRegFileVideo />,
+    'video/mov': <FaRegFileVideo />,
     'application/pdf': <FaRegFilePdf />,
     'application/xml': <FaRegFileAlt />,
+    'application/json': <FaRegFileAlt />,
+    'application/doc': <FaRegFileAlt />,
+    'application/docx': <FaRegFileAlt />,
+    'application/xls': <FaRegFileAlt />,
+    'application/xlsx': <FaRegFileAlt />,
+    'application/txt': <FaRegFileAlt />,
   };
 
   useEffect(() => {
@@ -172,7 +203,7 @@ function Answer() {
     <div className="w-full h-full flex flex-col gap-12">
       <div>
         <h1 className="text-4xl font-bold text-typo-primary">
-          {maintenanceData.building}
+          {maintenanceData.building_name}
         </h1>
       </div>
       <div className="flex items-start justify-stretch gap-8">
@@ -257,10 +288,16 @@ function Answer() {
                 value=""
                 onChange={handleFileChange}
               />
-              <div className="grid-cols-2 gap-4 grid mt-1">
+              <div className="grid-cols-1 gap-4 grid mt-1">
                 {form.photos && form.photos.map((file, i) => (
-                  <div key={i} className="flex">
-                    {iconFiles[file.type]}<p className="text-sm">{`${file.name.slice(0, 15)}${file.name.length > 15 && '...'}`}</p>
+                  <div key={i} className="flex gap-1">
+                    {iconFiles[file.type] || iconFiles['application/txt']}
+                    <p className="text-sm">{`${file.name.slice(0, 20)}`}</p>
+                    <FaTrashAlt className="cursor-pointer text-red-600" onClick={() => {
+                      if(!form.photos) return;
+                      const newPhotos = form.photos.filter((_, idx) => idx !== i);
+                      setForm({ ...form, photos: newPhotos });
+                    }} />
                   </div>
                 ))}
               </div>
@@ -274,10 +311,16 @@ function Answer() {
                 value=""
                 onChange={handleFileChange}
               />
-              <div className="grid-cols-2 gap-4 grid mt-1">
+              <div className="grid-cols-1 gap-4 grid mt-1">
                 {form.docs && form.docs.map((file, i) => (
-                  <div key={i} className="flex">
-                    {iconFiles[file.type]}<p className="text-sm">{`${file.name.slice(0, 15)}${file.name.length > 15 && '...'}`}</p>
+                  <div key={i} className="flex gap-1">
+                    {iconFiles[file.type] || iconFiles['application/txt']}
+                    <p className="text-sm">{`${file.name.slice(0, 20)}`}</p>
+                    <FaTrashAlt className="cursor-pointer text-red-600" onClick={() => {
+                      if(!form.docs) return;
+                      const newDocs = form.docs.filter((_, idx) => idx !== i);
+                      setForm({ ...form, docs: newDocs });
+                    }} />
                   </div>
                 ))}
               </div>

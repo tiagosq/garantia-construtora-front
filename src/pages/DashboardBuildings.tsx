@@ -55,7 +55,7 @@ function DashboardBuildings() {
       <div className="flex flex-col mt-12">
         <div className="inline-flex items-baseline gap-2 font-bold text-xl text-primary dark:text-typo-primary mb-4">
           <FaCalendarAlt className="text-typo-primary" />
-          <span>Manutenções e Conferências</span>
+          <span className="text-typo-primary">Manutenções e Conferências</span>
         </div>
         {!isLoading ? (
           <div className="flex items-center justify-start flex-wrap gap-4">

@@ -1,12 +1,12 @@
 import React from 'react';
 
 type IProps = {
-  type: 'text' | 'password' | 'email' | 'number' | 'tel' | 'date' | 'file';
+  type: 'text' | 'password' | 'email' | 'number' | 'tel' | 'date' | 'file' | 'hidden';
   name: string;
   value: string;
-  placeholder: string;
+  placeholder?: string;
   required?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   customStyle?: string;
   disabled?: boolean;
   autoComplete?: string;

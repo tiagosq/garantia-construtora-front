@@ -34,21 +34,53 @@ export const questionsCreateRequest = async (token: string, maintenance: string,
   return Promise.all(requests);        
 };
 
-export const questionsUpdateRequest = async (token: string, maintenance: string, business: string, data: IQuestion) => {
+export const questionsUpdateRequest = async (token: string, maintenance: string, business: string, data: IQuestion[]) => {
+  console.log(business, maintenance, data);
+  const requests = data.map((item) => {
+    return fetch(`${BASE_URL}/questions/${item.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        ...item,
+        business,
+        maintenance,
+      })
+    });
+  });
+  return Promise.all(requests);
+};
+export const questionsAnswerRequest = async (token: string, maintenance: string, business: string, data: IQuestion) => {
+  const formData = new FormData();
+
+  // Adiciona os campos de texto ao FormData
+  formData.append('business', business);
+  formData.append('maintenance', maintenance);
+  
+  Object.keys(data).forEach(key => {
+    if (key !== 'photos' && key !== 'docs') {
+      // @ts-expect-error 123
+      formData.append(key, (data as unknown)[key]);
+    }
+  });
+
+  // Adiciona as fotos e documentos como arquivos reais ao FormData
+  [...data.photos || [], ...data.docs || []].forEach((file) => {
+    formData.append('attachments_to_add', file as unknown as File); // Passa o arquivo File ou Blob
+  });
+
+  // Faz a requisição PUT com o FormData
   const response = await fetch(`${BASE_URL}/questions/${data.id}`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}` // Não inclua 'Content-Type', o FormData faz isso automaticamente
     },
-    body: JSON.stringify({
-      business,
-      maintenance,
-      ...data
-    })
+    body: formData
   });
-  return response.json();
 
+  return response.json();
 };
 
 export const maintenanceGetRequest = async (token: string, business: string, building: string = '') => {

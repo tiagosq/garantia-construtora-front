@@ -13,7 +13,7 @@ import { HashLoader } from "react-spinners";
 import { buildingSearchRequest } from "../../services/buildingsServices";
 import cookie from "react-cookies";
 import { AppContext } from "../../context/AppContext";
-import { maintenanceCreateRequest, questionsCreateRequest } from "../../services/maintenanceServices";
+import { maintenanceCreateRequest, maintenanceRequest, maintenanceUpdateRequest, questionsCreateRequest, questionsRequest, questionsUpdateRequest } from "../../services/maintenanceServices";
 
 type IForm = {
   name: string;
@@ -22,6 +22,7 @@ type IForm = {
   start_date: string;
   end_date: string;
   questions: {
+    id?: string;
     name: string;
     description: string;
   }[];
@@ -30,7 +31,7 @@ type IForm = {
 
 function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const { id } = useParams();
-  const [isLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [buildings, setBuildings] = useState<{ id: string; name: string; }[]>([]);
   const { userData } = useContext(AppContext);
@@ -46,11 +47,26 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
   });
 
   useEffect(() => {
-    if(id) {
+    if(id && userData?.data?.business?.id && type === 'edit') {
+      let maintenance = { ...form };
       // fetch maintenance data
+      maintenanceRequest(cookie.load('GC_JWT_AUTH'), id, userData.data.business.id)
+      .then((res) => {
+        maintenance = { ...res.data };
+        questionsRequest(cookie.load('GC_JWT_AUTH'), id, userData.data.business.id)
+        .then((res) => {
+          console.log(maintenance);
+          setForm({
+            ...form,
+            ...maintenance,
+            questions: res.data.data,
+          });
+        });
+        setIsLoading(false);
+      });
       // fetch questions data
     }
-  }, [id]);
+  }, [id, userData]);
 
   useEffect(() => {
     // fetch buildings data
@@ -108,6 +124,8 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
     }
     return false;
   };
+  
+  console.log(id);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -134,27 +152,45 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
         is_approved: false,
         business: userData.data.business.id,
       };
-      maintenanceCreateRequest(cookie.load('GC_JWT_AUTH'), body)
-        .then((data) => {
-          const maintenance = data.data.id;
-          questionsCreateRequest(cookie.load('GC_JWT_AUTH'), maintenance, userData.data.business.id, form.questions)
+      if(id) {
+        maintenanceUpdateRequest(cookie.load('GC_JWT_AUTH'), body, id)
           .then(() => {
+            const updateQuestions = form.questions.filter((question) => question.id);
+            const newQuestions = form.questions.filter((question) => !question.id);
+            questionsCreateRequest(cookie.load('GC_JWT_AUTH'), id, userData.data.business.id, newQuestions);
+            questionsUpdateRequest(cookie.load('GC_JWT_AUTH'), id, userData.data.business.id, updateQuestions)
+            .then(() => {});
+          })
+          .catch(() => {
             Swal.fire({
-              title: 'Sucesso!',
-              text: 'Manutenção cadastrada com sucesso.',
-              icon: 'success',
-            }).then(() => {
-              navigate('/maintenance');
+              title: 'Erro!',
+              text: 'Ocorreu um erro ao atualizar a manutenção.',
+              icon: 'error',
             });
           });
-        })
-        .catch(() => {
-          Swal.fire({
-            title: 'Erro!',
-            text: 'Ocorreu um erro ao cadastrar a manutenção.',
-            icon: 'error',
+      } else {
+        maintenanceCreateRequest(cookie.load('GC_JWT_AUTH'), body)
+          .then((data) => {
+            const maintenance = data.data.id;
+            questionsCreateRequest(cookie.load('GC_JWT_AUTH'), maintenance, userData.data.business.id, form.questions)
+            .then(() => {
+              Swal.fire({
+                title: 'Sucesso!',
+                text: 'Manutenção cadastrada com sucesso.',
+                icon: 'success',
+              }).then(() => {
+                navigate('/maintenance');
+              });
+            });
+          })
+          .catch(() => {
+            Swal.fire({
+              title: 'Erro!',
+              text: 'Ocorreu um erro ao cadastrar a manutenção.',
+              icon: 'error',
+            });
           });
-        });
+      }
     }
   };
 
@@ -169,6 +205,13 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
     }));
   };
 
+  const formatDate = (date: string) => {
+    if(date) {
+      return new Date(date).toISOString().split('T')[0];
+    }
+    return '';
+  }
+
   if(id && isLoading) {
     return (
       <div className="w-full h-[50vh] flex justify-center items-center">
@@ -180,7 +223,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
     <div className="w-full h-full max-w-[1000px]">
       <h1 className="mb-8 text-3xl font-bold text-blue-1">Cadastrar Nova Manutenção</h1>
       <ErrorList errors={errors} />
-      <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
+      <form className="w-full flex flex-col gap-6" onSubmit={onSubmit} encType="multipart/form-data">
         <div className="flex flex-wrap gap-4">
           <Label
             text="Nome da Manutenção"
@@ -240,7 +283,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
             <Input
               name="start_date"
               type="date"
-              value={form.start_date}
+              value={formatDate(form.start_date)}
               placeholder="00/00/0000"
               mask="00/00/0000"
               showMask
@@ -260,7 +303,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
               placeholder="00/00/0000"
               mask="00/00/0000"
               showMask
-              value={form.end_date}
+              value={formatDate(form.end_date)}
               onChange={handleChange}
               disabled={type === 'view'}
               required
@@ -299,6 +342,11 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
                 }}
               />
             </p>
+            <Input
+              name="id"
+              type="hidden"
+              value={question.id || ''}
+            />
             <Input
               name="name"
               type="text"

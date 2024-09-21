@@ -25,6 +25,7 @@ export interface IMaintenance {
   is_completed?: boolean;
   is_approved?: boolean;
   business: string;
+  building_name?: string;
   building: string; // Add the 'building' property
   user?: string;
 }
