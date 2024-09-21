@@ -36,8 +36,8 @@ function Answer() {
     date: '',
     status: false,
     observations: '',
-    photos: [] as File[],
-    docs: [] as File[],
+    photos: [],
+    docs: [],
   };
 
   const [answers, setAnswers] = useState<IQuestion[]>([] as IQuestion[]);
@@ -70,19 +70,18 @@ function Answer() {
     });
     setAnswers(newAnswers as IQuestion[]);
   
-    if (index < answers.length - 1) {
-      setActiveAnswer(answers[index + 1]);
-      setIndex(index + 1);
-    }
-  
-    console.log('Form Data:', form);
-  
     questionsAnswerRequest(cookie.load('GC_JWT_AUTH'), maintenance, business, form)
       .then(() => {
         Swal.fire({
           icon: 'success',
           title: 'Sucesso',
           text: 'Resposta salva com sucesso',
+        }).then(() => {      
+          if (index < answers.length - 1) {
+            setActiveAnswer(answers[index + 1] || templateQuestion);
+            setForm(answers[index + 1] || templateQuestion);
+            setIndex(index + 1);
+          }
         });
       })
       .catch((error) => {
@@ -104,6 +103,8 @@ function Answer() {
           icon: 'success',
           title: 'Sucesso',
           text: 'Manutenção concluída',
+        }).then(() => {
+          navigate('/maintenance');
         });
       })
       .catch((error) => {
