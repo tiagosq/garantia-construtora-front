@@ -3,6 +3,7 @@ export type IAttachment = {
   type: string;
   size: number;
   url: string;
+  path?: string;
 };
 
 export type IQuestion = {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp, FaRegFileAlt, FaRegFileImage, FaRegFilePdf, FaRegFileVideo } from "react-icons/fa";
 import { IAttachment } from "../../types/types";
+import { BASE_URL } from "../../services/maintenanceServices";
 
 type IProps = {
   title: string;
@@ -63,7 +64,7 @@ function Collapse({ title, description, observations, status, attachments }: IPr
             <h3 className="font-bold text-blue-1">Anexos:</h3>
             <div className="flex gap-2">
               {attachments.map((attachment, i) => (
-                <a key={i} href={attachment.url} target="_blank" rel="noreferrer" className="flex gap-px items-baseline hover:underline">
+                <a key={i} href={`${BASE_URL}/attachment/${attachment.path}`} target="_blank" rel="noreferrer" className="flex gap-px items-baseline hover:underline">
                   {iconFiles[attachment.type] || iconFiles['application/txt']}
                   {attachment.name}
                 </a>
