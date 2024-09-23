@@ -19,7 +19,7 @@ function Buildings() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
-  const [sort, setSort] = useState({ column: 'building_name', order: 'asc'});
+  const [sort, setSort] = useState({ column: 'name', order: 'asc'});
   const [data, setData] = useState<{
     last_page: number;
     data: { 
@@ -87,7 +87,7 @@ function Buildings() {
     const token = cookie.load('GC_JWT_AUTH');
     if(!userData?.data?.business?.id) return;
     const filters = [];
-    if(form.name) filters.push(`building_name-search=${form.name}`);
+    if(form.name) filters.push(`name-search=${form.name}`);
     buildingSearchRequest(token, userData.data.business.id, page, limit, sort, filters).then((data) => {
       setData(data.data);
       setIsLoading(false);
@@ -147,7 +147,7 @@ function Buildings() {
         ) : (
           <Table
             headers={[
-              { name: 'Empreendimento', column: 'building_name', sortable: true },
+              { name: 'Empreendimento', column: 'name', sortable: true },
               { name: 'Cidade', column: 'city', sortable: true },
               { name: 'Estado', column: 'state' },
               { name: 'Ações', column: 'actions' },

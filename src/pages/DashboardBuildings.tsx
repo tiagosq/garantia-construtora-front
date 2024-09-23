@@ -21,7 +21,7 @@ function DashboardBuildings() {
     const token = cookie.load('GC_JWT_AUTH');
     if(!userData?.data?.business?.id) return;
     if(id) {
-      maintenanceGetRequest(token, userData.data.business.id, id)
+      maintenanceGetRequest(token, userData.data.business.id, id, 1, 100, { column: 'start_date', order: 'asc' }, [])
       .then((res) => {
         const parsedData = res.data.data.map((maintenance: IMaintenanceData) => ({
           ...maintenance,

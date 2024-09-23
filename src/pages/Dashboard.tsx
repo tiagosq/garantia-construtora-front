@@ -12,7 +12,7 @@ function Dashboard() {
   useEffect(() => {
     const token = cookie.load('GC_JWT_AUTH');
     if(!userData?.data?.business?.id) return;
-    buildingSearchRequest(token, userData.data.business.id)
+    buildingSearchRequest(token, userData.data.business.id, 1, 100, { column: 'name', order: 'asc' }, [])
     .then((res) => {
       setBuildings(res.data.data);
     });
