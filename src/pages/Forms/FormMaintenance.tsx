@@ -72,7 +72,7 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
     // fetch buildings data
     const token = cookie.load('GC_JWT_AUTH');
     if(userData?.data?.business?.id) {
-      buildingSearchRequest(token, userData.data.business.id)
+      buildingSearchRequest(token, userData.data.business.id, 1, 100, { column: 'name', order: 'asc' }, [])
       .then((res) => {
         setBuildings([{ id: '', name: 'Selecione um empreendimento' }, ...res.data.data]);
       });

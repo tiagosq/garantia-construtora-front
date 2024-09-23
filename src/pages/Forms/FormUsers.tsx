@@ -44,7 +44,7 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
 
   const getBusiness = () => {
     const token = cookie.load('GC_JWT_AUTH');
-    businessSearchRequest(token)
+    businessSearchRequest(token, 1, 100, { column: 'name', order: 'asc' }, [])
     .then((data) => {
       setBusinesses(data.data.data);
     });
