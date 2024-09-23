@@ -1,3 +1,4 @@
+import cookies from 'react-cookies';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const loginRequest = async (email: string, password: string) => {
@@ -62,6 +63,7 @@ export const refreshTokenRequest = async (token: string) => {
     throw new Error('Token inválido.');
   } else {
     const data = await response.json();
+    cookies.save('GC_JWT_AUTH', data.access_token, { path: '/', expires: new Date(Date.now() + 60 * 60 * 1000) });
     return data;
   }
 };

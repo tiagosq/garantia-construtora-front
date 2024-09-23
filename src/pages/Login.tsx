@@ -34,7 +34,7 @@ function Login() {
       setError('');
       loginRequest(form.email, form.password).then(({ data }) => {
         if (data?.access_token) {
-          cookie.save('GC_JWT_AUTH', data.access_token, { path: '/' });
+          cookie.save('GC_JWT_AUTH', data.access_token, { path: '/', expires: new Date(Date.now() + 60 * 60 * 1000) });
           navigate('/dashboard');
         }
       }).catch((error) => {
