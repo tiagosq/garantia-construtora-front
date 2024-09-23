@@ -1,8 +1,11 @@
 import { IUser } from '../types/types';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-export const userSearchRequest = async (token: string, page = 1, limit = 25) => {
-  const url = `${BASE_URL}/users?page=${page}&limit=${limit}`;
+export const userSearchRequest = async (token: string, page = 1, limit = 25, sort = { column: 'email', order: 'asc' }, filters: string[]) => {
+  let url = `${BASE_URL}/users?page=${page}&limit=${limit}&${sort.column}-order=${sort.order}`;
+  if(filters.length > 0) {
+    url += `&${filters.join('&')}`;
+  }
   const response = await fetch(url, {
     method: 'GET',
     headers: {

@@ -19,7 +19,7 @@ function Business() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
-  const [sort, setSort] = useState({ column: '', order: ''});
+  const [sort, setSort] = useState({ column: 'name', order: 'asc'});
   const [data, setData] = useState<{
     last_page: number;
     data: { 
@@ -27,13 +27,20 @@ function Business() {
     }[] 
   }>({ last_page: 0, data: [] });
 
-  useEffect(() => {
+  const search = () => {
     setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
-    businessSearchRequest(token, page, limit).then((data) => {
+    const filters = [];
+    if(form.name) filters.push(`name-search=${form.name}`);
+    businessSearchRequest(token, page, limit, sort, filters).then((data) => {
       setData(data.data);
       setIsLoading(false);
     });
+  };
+
+  useEffect(() => {
+    setPage(1);
+    search();
   }, [page, limit, sort]);
 
   const actions = (id: string) => (
@@ -123,6 +130,7 @@ function Business() {
         </Label>
         <Button
           type="button"
+          onClick={search}
           text={
           <span className="inline-flex items-center gap-1 mt-px">
             <IoSearchOutline className="text-xl" />
@@ -130,7 +138,6 @@ function Business() {
           </span>
           }
           customStyle="!bg-blue-2 !h-10 text-sm"
-          onClick={() => console.log(form)}
         />
       </div>
       <div>

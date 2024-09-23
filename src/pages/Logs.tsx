@@ -5,7 +5,7 @@ import Button from "../components/Button";
 import { IoSearchOutline } from "react-icons/io5";
 import Table from "../components/Table";
 import cookie from "react-cookies";
-import { logExport, logRequest } from "../services/logsServices";
+import { logRequest } from "../services/logsServices";
 import { HashLoader } from "react-spinners";
 
 function Logs() {
@@ -13,7 +13,7 @@ function Logs() {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
-  const [sort, setSort] = useState({ column: '', order: ''});
+  const [sort, setSort] = useState({ column: 'created_at', order: 'desc'});
   const [data, setData] = useState<{
     last_page: number;
     data: { 
@@ -21,28 +21,22 @@ function Logs() {
     }[] 
   }>({ last_page: 0, data: [] });
 
-  useEffect(() => {
+  const search = () => {
     setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
-    logRequest(token, page, limit).then((data) => {
+    const filters = [];
+    if(form.email) filters.push(`user-search=${form.email}`);
+    if(form.startDate && form.endDate) filters.push(`created_at-search=${form.startDate}|${form.endDate}`);
+    logRequest(token, page, limit, sort, filters).then((data) => {
       setData(data.data);
       setIsLoading(false);
     });
-  }, [page, limit, sort]);
+  }
 
-  const exportCSV = () => {
-    logExport(cookie.load('GC_JWT_AUTH'), page, limit).then(
-      (blob) => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'logs.csv');
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      }
-    );
-  };
+  useEffect(() => {
+    setPage(1);
+    search();
+  }, [page, limit, sort]);
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -84,7 +78,7 @@ function Logs() {
           </span>
           }
           customStyle="!bg-blue-2 !h-10 text-sm"
-          onClick={exportCSV}
+          onClick={search}
         />
       </div>
       <div>
@@ -95,7 +89,7 @@ function Logs() {
         ) : (
         <Table
           headers={[
-            { name: 'Data', column: 'created_at' },
+            { name: 'Data', column: 'created_at', sortable: true },
             { name: 'Usuário', column: 'user', sortable: true },
             { name: 'Endereço IP', column: 'ip' },
             { name: 'Ação', column: 'action' }

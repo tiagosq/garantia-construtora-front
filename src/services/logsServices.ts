@@ -12,8 +12,11 @@ export type ISearch = {
   };
 }
 
-export const logRequest = async (token: string, page = 1, limit = 25) => {
-  const url = `${BASE_URL}/logs?page=${page}&limit=${limit}`;
+export const logRequest = async (token: string, page = 1, limit = 25, sort = { column: 'created_at',  order: 'desc' }, filters: string[]) => {
+  let url = `${BASE_URL}/logs?page=${page}&limit=${limit}&${sort.column}-order=${sort.order}`;
+  if(filters.length > 0) {
+    url += `&${filters.join('&')}`;
+  }
   const response = await fetch(url, {
     method: 'GET',
     headers: {

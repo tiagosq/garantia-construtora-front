@@ -19,7 +19,7 @@ function Business() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(25);
-  const [sort, setSort] = useState({ column: '', order: ''});
+  const [sort, setSort] = useState({ column: 'email', order: 'asc'});
   const [data, setData] = useState<{
     last_page: number;
     data: { 
@@ -27,13 +27,20 @@ function Business() {
     }[] 
   }>({ last_page: 0, data: [] });
 
-  useEffect(() => {
+  const search = () => {
     setIsLoading(true);
     const token = cookie.load('GC_JWT_AUTH');
-    userSearchRequest(token, page, limit).then((data) => {
+    const filters = [];
+    if(form.email) filters.push(`email-search=${form.email}`);
+    userSearchRequest(token, page, limit, sort, filters).then((data) => {
       setData(data.data);
       setIsLoading(false);
     });
+  };
+
+  useEffect(() => {
+    setPage(1);
+    search();    
   }, [page, limit, sort]);
 
   const actions = (id: string) => (
@@ -116,7 +123,7 @@ function Business() {
           </span>
           }
           customStyle="!bg-blue-2 !h-10 text-sm"
-          onClick={() => console.log(form)}
+          onClick={search}
         />
       </div>
       <div>

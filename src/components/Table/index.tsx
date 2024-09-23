@@ -1,4 +1,4 @@
-import { FaArrowLeft, FaArrowRight, FaRegSadCry, FaSortDown, FaSortUp } from "react-icons/fa";
+import { FaRegSadCry, FaSortDown, FaSortUp } from "react-icons/fa";
 import { FaSort } from "react-icons/fa6";
 import Select from "../Select";
 import moment, { MomentInput } from "moment";

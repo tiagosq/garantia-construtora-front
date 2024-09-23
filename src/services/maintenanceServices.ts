@@ -86,10 +86,13 @@ export const questionsAnswerRequest = async (token: string, maintenance: string,
   return response.json();
 };
 
-export const maintenanceGetRequest = async (token: string, business: string, building: string = '') => {
-  let url = `${BASE_URL}/maintenances?business=${business}`;
+export const maintenanceGetRequest = async (token: string, business: string, building: string = '', page = 1, limit = 25, sort = { column: 'end_date', order: 'desc' }, filters: string[]) => {
+  let url = `${BASE_URL}/maintenances?business=${business}&page=${page}&limit=${limit}&${sort.column}-order=${sort.order}`;
   if(building) {
     url += `&building=${building}`;
+  }
+  if(filters.length > 0) {
+    url += `&${filters.join('&')}`;
   }
   const response = await fetch(url, {
     method: 'GET',

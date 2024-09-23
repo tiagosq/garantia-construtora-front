@@ -13,8 +13,11 @@ type IBusiness = {
   status: boolean;
 };
 
-export const businessSearchRequest = async (token: string, page = 1, limit = 25) => {
-  const url = `${BASE_URL}/businesses?page=${page}&limit=${limit}`;
+export const businessSearchRequest = async (token: string, page = 1, limit = 25, sort = { column: 'name', order: 'asc' }, filters: string[]) => {
+  let url = `${BASE_URL}/businesses?page=${page}&limit=${limit}&${sort.column}-order=${sort.order}`;
+  if(filters.length > 0) {
+    url += `&${filters.join('&')}`;
+  }
   const response = await fetch(url, {
     method: 'GET',
     headers: {
