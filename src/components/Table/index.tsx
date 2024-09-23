@@ -89,25 +89,40 @@ function Table({ headers, data, limit, page, sort, setLimit, setPage, setSort }:
         <div className="flex gap-4 flex-wrap justify-end">
           {data.last_page > 1 && (
           <div className="flex gap-0.5 justify-center items-center">
-            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tl rounded-bl"
-              onClick={page > 1 ? () => setPage(page - 1) : undefined}
+            <div
+              className={`cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tl rounded-bl
+              ${page === 1 && 'brightness-125 saturate-150'}`}
+              onClick={() => setPage(1)}
             >
-              <FaArrowLeft />
+              1
             </div>
-            {Array.from({ length: data.last_page }, (_, i) => i + 1).map((item) => (
-              <div className={`cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1
-              ${page === item && 'brightness-125 saturate-150'}`}
-                key={`page-${item}`}
-                onClick={page !== item ? () => setPage(item) : undefined}
-              >
-                {item}
-              </div>
-            ))}
-            <div className="cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tr rounded-br"
-              onClick={page < data.last_page ? () => setPage(page + 1) : undefined}
-            >
-              <FaArrowRight />
-            </div>
+            {page > 3 && (
+            <div className={`cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1`}>...</div>
+            )}
+            {Array.from({ length: data.last_page }, (_, i) => i + 1)
+              .filter((item) => item >= page - 2 && item <= page + 2 && item > 1 && item < data.last_page)
+              .map((item) => (
+                <div
+                  className={`cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1
+                  ${page === item && 'brightness-125 saturate-150'}`}
+                  key={`page-${item}`}
+                  onClick={page !== item ? () => setPage(item) : undefined}
+                >
+                  {item}
+                </div>
+              ))}
+            {data.last_page > 5 && (
+              <>
+                <div className={`cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 grayscale-50`}>...</div>
+                <div
+                  className={`cursor-pointer hover:brightness-125 w-10 h-10 flex justify-center items-center bg-blue-2 text-white-1 rounded-tr rounded-br
+                  ${page === data.last_page && 'brightness-125 saturate-150'}`}
+                  onClick={() => setPage(data.last_page)}
+                >
+                  {data.last_page}
+                </div>
+              </>
+            )}
           </div>
           )}
           <div className="flex items-center justify-end gap-2">
