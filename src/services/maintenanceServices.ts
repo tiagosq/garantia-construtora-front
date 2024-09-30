@@ -55,9 +55,47 @@ export const questionsAnswerRequest = async (
   token: string,
   maintenance: string,
   business: string,
-  data: IQuestion,
+  data: IQuestion & { filesDeleted?: string[] },
 ) => {
   const formData = new FormData();
+
+  if (data.fiscal) {
+    data.fiscal.forEach((item, i) => {
+      // @ts-expect-error - Ignorar erro de tipagem pois é uma validação de tipos diferentes.
+      if(!item.id) {
+        formData.append(`fiscal[${i}]`, item as unknown as Blob);
+      }
+    });
+    delete data.fiscal;
+  }
+
+  if (data.photos) {
+    data.photos.forEach((item, i) => {
+      // @ts-expect-error - Ignorar erro de tipagem pois é uma validação de tipos diferentes.
+      if(!item.id) {
+        formData.append(`photo[${i}]`, item as unknown as Blob);
+      }
+    });
+    delete data.photos;
+  }
+
+  if (data.videos) {
+    data.videos.forEach((item, i) => {
+      // @ts-expect-error - Ignorar erro de tipagem pois é uma validação de tipos diferentes.
+      if(!item.id) {
+        formData.append(`video[${i}]`, item as unknown as Blob);
+      }
+    });
+    delete data.videos;
+  }
+
+  if(data.filesDeleted) {
+    data.filesDeleted.forEach((item, i) => {
+      formData.append(`filesDeleted[${i}]`, item);
+    });
+    delete data.filesDeleted
+  }
+
   // Adiciona outros dados ao FormData
   Object.keys(data).forEach((key) => {
     // @ts-expect-error - Ignorar erro de tipagem

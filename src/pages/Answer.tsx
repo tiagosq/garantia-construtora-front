@@ -73,10 +73,7 @@ function Answer() {
     building: '',
     user: '',
   });
-
-  // Estados para rastrear arquivos adicionados e removidos
-  const [addedFiles, setAddedFiles] = useState<{ [key: string]: File[] }>({});
-  const [removedFiles, setRemovedFiles] = useState<{ [key: string]: File[] }>({});
+  const [filesDeleted, setFilesDeleted] = useState<string[]>([]);
 
   const handleSave = () => {
     if (!maintenance || !business) return;
@@ -92,7 +89,7 @@ function Answer() {
     });
     setAnswers(newAnswers as IQuestion[]);
   
-    questionsAnswerRequest(cookie.load('GC_JWT_AUTH'), maintenance, business, form)
+    questionsAnswerRequest(cookie.load('GC_JWT_AUTH'), maintenance, business, { ...form, filesDeleted })
       .then(() => {
         Swal.fire({
           icon: 'success',
@@ -150,30 +147,14 @@ function Answer() {
       // @ts-expect-error - Não é possível garantir que a chave exista
       [name]: [...(form[name] || []), ...files],
     });
-
-    setAddedFiles({
-      ...addedFiles,
-      [name]: [...(addedFiles[name] || []), ...files],
-    });
   };
 
   const handleFileRemove = (name: string, index: number) => {
     // @ts-expect-error - Não é possível garantir que a chave exista
-    const fileToRemove = form[name][index];
-  
-    // Verifica se o arquivo está na lista de arquivos adicionados
-    if (addedFiles[name]?.includes(fileToRemove)) {
-      setAddedFiles({
-        ...addedFiles,
-        [name]: addedFiles[name].filter((_, idx) => idx !== index),
-      });
-    } else {
-      setRemovedFiles({
-        ...removedFiles,
-        [name]: [...(removedFiles[name] || []), fileToRemove],
-      });
+    const file = form[name][index];
+    if(file.id) {
+      setFilesDeleted([...filesDeleted, file.id]);
     }
-  
     setForm({
       ...form,
       // @ts-expect-error - Não é possível garantir que a chave exista

@@ -21,9 +21,9 @@ export type IQuestion = {
   status?: boolean | string | number;
   observations?: string;
   attachments?: IAttachment[];
-  videos: IAttachment[];
-  photos: IAttachment[];
-  fiscal: IAttachment[];
+  videos?: IAttachment[];
+  photos?: IAttachment[];
+  fiscal?: IAttachment[];
 };
 
 export interface IMaintenance {
