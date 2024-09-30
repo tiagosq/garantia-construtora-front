@@ -40,6 +40,21 @@ function FormBuildings({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const navigate = useNavigate();
   const { userData } = useContext(AppContext);
 
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.building;
+      if ((!permissions.create && type === 'edit') || (!permissions.read && type === 'view') || (!permissions.update && type === 'edit' && id)) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { target: { value, name } } = e;
     setForm({

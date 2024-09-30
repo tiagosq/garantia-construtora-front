@@ -62,7 +62,7 @@ function Collapse({ title, description, observations, status, attachments }: IPr
         {attachments && attachments.length > 0 && (
           <>
             <h3 className="font-bold text-blue-1">Anexos:</h3>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
               {attachments.map((attachment, i) => (
                 <a key={i} href={`${BASE_URL}/attachment/${attachment.path}`} target="_blank" rel="noreferrer" className="flex gap-px items-baseline hover:underline">
                   {iconFiles[attachment.type] || iconFiles['application/txt']}

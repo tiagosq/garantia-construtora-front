@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
@@ -7,6 +7,9 @@ import Table from "../components/Table";
 import cookie from "react-cookies";
 import { logRequest } from "../services/logsServices";
 import { HashLoader } from "react-spinners";
+import { AppContext } from "../context/AppContext";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function Logs() {
   const [form, setForm] = useState<{ email: string; startDate: string; endDate: string; }>({ email: '', startDate: '', endDate: '' });
@@ -37,6 +40,24 @@ function Logs() {
     setPage(1);
     search();
   }, [page, limit, sort]);
+
+  const { userData } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.log;
+      if (!permissions.read) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
 
   return (
     <div className="w-full h-full flex flex-col gap-4">

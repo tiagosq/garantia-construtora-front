@@ -1,4 +1,4 @@
-import { IMaintenance, IQuestion } from "../types/types";
+import { IMaintenance, IQuestion, IQuestionCreation } from "../types/types";
 
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -13,7 +13,7 @@ export const questionsRequest = async (token: string, maintenance: string, busin
   return response.json();
 };
 
-export const questionsCreateRequest = async (token: string, maintenance: string, business: string, data: IQuestion[]) => {
+export const questionsCreateRequest = async (token: string, maintenance: string, business: string, data: IQuestionCreation[]) => {
   const requests = data.map((item) => {
     return fetch(`${BASE_URL}/questions`, {
       method: 'POST',
@@ -34,7 +34,7 @@ export const questionsCreateRequest = async (token: string, maintenance: string,
   return Promise.all(requests);        
 };
 
-export const questionsUpdateRequest = async (token: string, maintenance: string, business: string, data: IQuestion[]) => {
+export const questionsUpdateRequest = async (token: string, maintenance: string, business: string, data: IQuestionCreation[]) => {
   const requests = data.map((item) => {
     return fetch(`${BASE_URL}/questions/${item.id}`, {
       method: 'PUT',
@@ -51,24 +51,19 @@ export const questionsUpdateRequest = async (token: string, maintenance: string,
   });
   return Promise.all(requests);
 };
-export const questionsAnswerRequest = async (token: string, maintenance: string, business: string, data: IQuestion) => {
-  // Faz a requisição PUT com o FormData
+export const questionsAnswerRequest = async (
+  token: string,
+  maintenance: string,
+  business: string,
+  data: IQuestion,
+) => {
   const formData = new FormData();
-
-  [...data.photos || [], ...data.docs || []].forEach((item, index) => {
-    // @ts-expect-error - Não é possível garantir que a chave exista
-    formData.append(`attachments_to_add[${index}]`, item);
-  });
-
-  delete data.photos;
-  delete data.docs;
-  data.status = 1;
-
+  // Adiciona outros dados ao FormData
   Object.keys(data).forEach((key) => {
-    // @ts-expect-error - Não é possível garantir que a chave exista
-    if(data[key]) {
-      // @ts-expect-error - Não é possível garantir que a chave exista
-      formData.append(key, data[key]);
+    // @ts-expect-error - Ignorar erro de tipagem
+    if (data[key]) {
+      // @ts-expect-error - Ignorar erro de tipagem
+      formData.append(key, data[key] as unknown as Blob);
     }
   });
 

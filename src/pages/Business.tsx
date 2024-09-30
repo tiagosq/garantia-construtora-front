@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
@@ -12,6 +12,7 @@ import { businessDeleteRequest, businessSearchRequest } from "../services/busine
 import cookie from "react-cookies";
 import { formatCNPJ } from "../utils/format";
 import { HashLoader } from "react-spinners";
+import { AppContext } from "../context/AppContext";
 
 function Business() {
   const [form, setForm] = useState<{ name: string; }>({ name: '' });
@@ -43,11 +44,31 @@ function Business() {
     search();
   }, [page, limit, sort]);
 
+  const { userData } = useContext(AppContext);
+  const writePermission = userData.data?.role.permissions.business.create;
+  const updatePermission = userData.data?.role.permissions.business.update;
+  const deletePermission = userData.data?.role.permissions.business.delete;
+
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.business;
+      if (!permissions.read) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
+
   const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
       <FaRegFile onClick={() => navigate(`/business/${id}/view`)} />
-      <FaRegEdit onClick={() => navigate(`/business/${id}/edit`)} />
-      <FaRegTrashAlt 
+      {updatePermission && (<FaRegEdit onClick={() => navigate(`/business/${id}/edit`)} />)}
+      {deletePermission && (<FaRegTrashAlt 
         className="text-red-600" 
         onClick={
           () => Swal.fire({
@@ -82,14 +103,13 @@ function Business() {
             }
           })
         } 
-      />
+      />)}
     </div>
   );
 
   const parsedData = {
     last_page: data.last_page,
     data: data.data.map((item) => {
-      console.log(item);
       return {
         ...item,
         cnpj: formatCNPJ(item.cnpj as string),
@@ -106,6 +126,7 @@ function Business() {
       <h1 className="text-3xl text-blue-1 font-bold">
         Empresas
       </h1>
+      {writePermission && (
       <Button
         type="button"
         onClick={() => navigate('/business/create')}
@@ -116,6 +137,7 @@ function Business() {
           </span>
         )}
       />
+      )}
       </div>
 
       <div className="w-full flex flex-wrap justify-start items-end gap-4">

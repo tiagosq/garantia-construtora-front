@@ -26,13 +26,32 @@ function Buildings() {
       [key: string]: string | number | React.ReactNode; 
     }[] 
   }>({ last_page: 0, data: [] });
+
   const { userData } = useContext(AppContext);
+  const writePermission = userData.data?.role.permissions.building.create;
+  const updatePermission = userData.data?.role.permissions.building.update;
+  const deletePermission = userData.data?.role.permissions.building.delete;
+
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.building;
+      if (!permissions.read) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
 
   const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
       <FaRegFile onClick={() => navigate(`/buildings/${id}/view`)} />
-      <FaRegEdit onClick={() => navigate(`/buildings/${id}/edit`)} />
-      <FaRegTrashAlt 
+      {updatePermission && (<FaRegEdit onClick={() => navigate(`/buildings/${id}/edit`)} />)}
+      {deletePermission && (<FaRegTrashAlt 
         className="text-red-600" 
         onClick={
           () => Swal.fire({
@@ -67,7 +86,7 @@ function Buildings() {
             }
           })
         } 
-      />
+      />)}
     </div>
   );
 
@@ -105,16 +124,18 @@ function Buildings() {
       <h1 className="text-3xl text-blue-1 font-bold">
         Empreendimentos
       </h1>
-      <Button
-        type="button"
-        onClick={() => navigate('/buildings/create')}
-        customStyle="!px-4 !py-1"
-        text={(
-          <span className="inline-flex items-center gap-2">
-            <FaPlus className="mb-px" /> Novo
-          </span>
-        )}
-      />
+      {writePermission && (
+        <Button
+          type="button"
+          onClick={() => navigate('/buildings/create')}
+          customStyle="!px-4 !py-1"
+          text={(
+            <span className="inline-flex items-center gap-2">
+              <FaPlus className="mb-px" /> Novo
+            </span>
+          )}
+        />
+      )}
       </div>
 
       <div className="w-full flex flex-wrap justify-start items-end gap-4">

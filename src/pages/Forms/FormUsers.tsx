@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../../components/Input";
 import Label from "../../components/Label";
 import Select from "../../components/Select";
@@ -13,6 +13,7 @@ import { userCreateRequest, userGetRequest, userUpdateRequest } from "../../serv
 import cookie from "react-cookies";
 import { roleSearchRequest } from "../../services/rolesServices";
 import { businessSearchRequest } from "../../services/businessServices";
+import { AppContext } from "../../context/AppContext";
 
 const defaultForm = {
   fullname: '',
@@ -33,6 +34,22 @@ function FormUsers({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [roles, setRoles] = useState([]);
   const [businesses, setBusinesses] = useState([]);
   const navigate = useNavigate();
+  const { userData } = useContext(AppContext);
+
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.user;
+      if ((!permissions.create && type === 'edit') || (!permissions.read && type === 'view') || (!permissions.update && type === 'edit' && id)) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
 
   const getRoles = () => {
     const token = cookie.load('GC_JWT_AUTH');

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
@@ -12,6 +12,7 @@ import { formatPhoneNumber } from "../utils/format";
 import { userDeleteRequest, userSearchRequest } from "../services/userServices";
 import cookie from "react-cookies";
 import { HashLoader } from "react-spinners";
+import { AppContext } from "../context/AppContext";
 
 function Business() {
   const [form, setForm] = useState<{ email: string; }>({ email: '' });
@@ -43,37 +44,60 @@ function Business() {
     search();    
   }, [page, limit, sort]);
 
+
+  const { userData } = useContext(AppContext);
+  const writePermission = userData.data?.role.permissions.user.create;
+  const updatePermission = userData.data?.role.permissions.user.update;
+  const deletePermission = userData.data?.role.permissions.user.delete;
+
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.user;
+      if (!permissions.read) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
+
   const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
       <FaRegFile onClick={() => navigate(`/users/${id}/view`)} />
-      <FaRegEdit onClick={() => navigate(`/users/${id}/edit`)} />
-      <FaRegTrashAlt 
-        className="text-red-600" 
-        onClick={
-          () => Swal.fire({
-            title: 'Tem certeza?',
-            text: 'Esta ação não poderá ser desfeita!', 
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#CC3333',
-            cancelButtonColor: '#333',
-            confirmButtonText: 'Excluir',
-            cancelButtonText: 'Cancelar',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              userDeleteRequest(cookie.load('GC_JWT_AUTH'), id).then(() => {
-                const newData = data.data.filter((item) => item.id !== id);
-                setData({ ...data, data: newData });
-                Swal.fire({
-                  title: 'Excluído!',
-                  text: 'O registro foi excluído.',
-                  icon: 'success',
+      {updatePermission && (<FaRegEdit onClick={() => navigate(`/users/${id}/edit`)} />)}
+      {deletePermission && (
+        <FaRegTrashAlt 
+          className="text-red-600" 
+          onClick={
+            () => Swal.fire({
+              title: 'Tem certeza?',
+              text: 'Esta ação não poderá ser desfeita!', 
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#CC3333',
+              cancelButtonColor: '#333',
+              confirmButtonText: 'Excluir',
+              cancelButtonText: 'Cancelar',
+            }).then((result) => {
+              if (result.isConfirmed) {
+                userDeleteRequest(cookie.load('GC_JWT_AUTH'), id).then(() => {
+                  const newData = data.data.filter((item) => item.id !== id);
+                  setData({ ...data, data: newData });
+                  Swal.fire({
+                    title: 'Excluído!',
+                    text: 'O registro foi excluído.',
+                    icon: 'success',
+                  });
                 });
-              });
-            }
-          })
-        } 
-      />
+              }
+            })
+          } 
+        />
+      )}
     </div>
   );
 
@@ -93,16 +117,18 @@ function Business() {
       <h1 className="text-3xl text-blue-1 font-bold">
         Usuários
       </h1>
-      <Button
-        type="button"
-        onClick={() => navigate('/users/create')}
-        customStyle="!px-4 !py-1"
-        text={(
-          <span className="inline-flex items-center gap-2">
-            <FaPlus className="mb-px" /> Novo
-          </span>
-        )}
-      />
+      {writePermission && (
+        <Button
+          type="button"
+          onClick={() => navigate('/users/create')}
+          customStyle="!px-4 !py-1"
+          text={(
+            <span className="inline-flex items-center gap-2">
+              <FaPlus className="mb-px" /> Novo
+            </span>
+          )}
+        />
+      )}
       </div>
       <div className="w-full flex flex-wrap justify-start items-end gap-4">
         <Label text="E-mail" customStyle="grow md:grow-0 min-w-96">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../../components/Input";
 import Label from "../../components/Label";
 import Checkbox from "../../components/Checkbox";
@@ -10,6 +10,7 @@ import { roleCreateRequest, roleGetRequest, roleUpdateRequest } from "../../serv
 import cookie from "react-cookies";
 import { useNavigate, useParams } from "react-router-dom";
 import { HashLoader } from "react-spinners";
+import { AppContext } from "../../context/AppContext";
 
 type IForm = {
   name: string;
@@ -27,12 +28,6 @@ const defaultForm: IForm = {
   management: false,
   status: true,
   permissions: {
-    attachment: {
-      create: false,
-      read: false,
-      update: false,
-      delete: false,
-    },
     building: {
       create: false,
       read: false,
@@ -46,18 +41,9 @@ const defaultForm: IForm = {
       delete: false,
     },
     log: {
-      create: false,
       read: false,
-      update: false,
-      delete: false,
     },
     maintenance: {
-      create: false,
-      read: false,
-      update: false,
-      delete: false,
-    },
-    question: {
       create: false,
       read: false,
       update: false,
@@ -84,6 +70,23 @@ function FormRoles({ type = 'view' }: { type?: 'view' | 'edit' }) {
   const [isLoading, setIsLoading] = useState(id ? true : false);
   const [form, setForm] = useState<IForm>(defaultForm);
   const navigate = useNavigate();
+
+  const { userData } = useContext(AppContext);
+
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.role;
+      if ((!permissions.create && type === 'edit') || (!permissions.read && type === 'view')) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     const { target: { value, name } } = e;

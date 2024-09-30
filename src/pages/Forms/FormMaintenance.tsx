@@ -47,6 +47,21 @@ function FormMaintenance({ type = 'view' }: { type?: 'view' | 'edit' }) {
   });
 
   useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.maintenance;
+      if ((!permissions.create && type === 'edit') || (!permissions.read && type === 'view') || (!permissions.update && type === 'edit' && id)) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
+
+  useEffect(() => {
     if(id && userData?.data?.business?.id && type === 'edit') {
       let maintenance = { ...form };
       // fetch maintenance data

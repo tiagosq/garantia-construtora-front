@@ -1,20 +1,29 @@
 export type IAttachment = {
   name: string;
   type: string;
+  category: string;
   size: number;
   url: string;
   path?: string;
 };
+
+export type IQuestionCreation = {
+  id?: string;
+  name: string;
+  description: string;
+}
 
 export type IQuestion = {
   id?: string;
   name: string;
   description: string;
   date?: string;
-  status?: boolean | number;
+  status?: boolean | string | number;
   observations?: string;
-  photos?: IAttachment[] | unknown[];
-  docs?: IAttachment[] | unknown[];
+  attachments?: IAttachment[];
+  videos: IAttachment[];
+  photos: IAttachment[];
+  fiscal: IAttachment[];
 };
 
 export interface IMaintenance {

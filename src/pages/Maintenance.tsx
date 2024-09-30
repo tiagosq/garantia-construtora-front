@@ -23,47 +23,67 @@ function Maintenance() {
   const [limit, setLimit] = useState(25);
   const [sort, setSort] = useState({ column: 'end_date', order: 'desc' });
   const { userData } = useContext(AppContext);
+  const writePermission = userData.data?.role.permissions.maintenance.create;
+  const updatePermission = userData.data?.role.permissions.maintenance.update;
+  const deletePermission = userData.data?.role.permissions.maintenance.delete;
+
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.maintenance;
+      if (!permissions.read) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
 
   const actions = (id: string) => (
     <div className="inline-flex gap-2 items-center">
       <FaRegFile onClick={() => navigate(`/dashboard/maintenance/${id}`)} />
-      <FaRegEdit onClick={() => navigate(`/maintenance/${id}/edit`)} />
-      <FaRegTrashAlt
-        className="text-red-600" 
-        onClick={
-          () => Swal.fire({
-            title: 'Tem certeza?',
-            text: 'Esta ação não poderá ser desfeita!', 
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#CC3333',
-            cancelButtonColor: '#333',
-            confirmButtonText: 'Excluir',
-            cancelButtonText: 'Cancelar',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              maintenanceDeleteRequest(cookie.load('GC_JWT_AUTH'), id).then(() => {
-                Swal.fire({
-                  title: 'Excluído!',
-                  text: 'O registro foi excluído.',
-                  icon: 'success',
-                }).then(() => {
-                  setData({
-                    last_page: data.last_page,
-                    data: data.data.filter((item: IMaintenance) => item.id !== id)
-                  });
-                }).catch(() => {
+      {updatePermission && (<FaRegEdit onClick={() => navigate(`/maintenance/${id}/edit`)} />)}
+      {deletePermission && (
+        <FaRegTrashAlt
+          className="text-red-600" 
+          onClick={
+            () => Swal.fire({
+              title: 'Tem certeza?',
+              text: 'Esta ação não poderá ser desfeita!', 
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#CC3333',
+              cancelButtonColor: '#333',
+              confirmButtonText: 'Excluir',
+              cancelButtonText: 'Cancelar',
+            }).then((result) => {
+              if (result.isConfirmed) {
+                maintenanceDeleteRequest(cookie.load('GC_JWT_AUTH'), id).then(() => {
                   Swal.fire({
-                    title: 'Erro!',
-                    text: 'Ocorreu um erro ao excluir o registro.',
-                    icon: 'error',
+                    title: 'Excluído!',
+                    text: 'O registro foi excluído.',
+                    icon: 'success',
+                  }).then(() => {
+                    setData({
+                      last_page: data.last_page,
+                      data: data.data.filter((item: IMaintenance) => item.id !== id)
+                    });
+                  }).catch(() => {
+                    Swal.fire({
+                      title: 'Erro!',
+                      text: 'Ocorreu um erro ao excluir o registro.',
+                      icon: 'error',
+                    });
                   });
                 });
-              });
-            }
-          })
-        } 
-      />
+              }
+            })
+          } 
+        />
+      )}
     </div>
   );
 
@@ -102,18 +122,19 @@ function Maintenance() {
       <h1 className="text-3xl text-blue-1 font-bold">
         Manutenções
       </h1>
-      <Button
-        type="button"
-        onClick={() => navigate('/maintenance/create')}
-        customStyle="!px-4 !py-1"
-        text={(
-          <span className="inline-flex items-center gap-2">
-            <FaPlus className="mb-px" /> Novo
-          </span>
-        )}
-      />
+      {writePermission && (
+        <Button
+          type="button"
+          onClick={() => navigate('/maintenance/create')}
+          customStyle="!px-4 !py-1"
+          text={(
+            <span className="inline-flex items-center gap-2">
+              <FaPlus className="mb-px" /> Novo
+            </span>
+          )}
+        />
+      )}
       </div>
-
       <div className="w-full flex flex-wrap justify-start items-end gap-4">
         <Label text="Empreendimento" customStyle="grow md:grow-0 min-w-96">
           <Input

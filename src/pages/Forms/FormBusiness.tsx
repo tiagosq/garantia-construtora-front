@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../../components/Input";
 import Label from "../../components/Label";
 import Select from "../../components/Select";
@@ -12,6 +12,7 @@ import { HashLoader } from "react-spinners";
 import { businessCreateRequest, businessGetRequest, businessUpdateRequest } from "../../services/businessServices";
 import cookie from "react-cookies";
 import { getCEP, getCNPJ } from "../../services/brasilAPIServices";
+import { AppContext } from "../../context/AppContext";
 
 const defaultForm = {
   name: '',
@@ -171,6 +172,22 @@ function FormBusiness({ type = 'view' }: { type?: 'view' | 'edit' }) {
       setForm(defaultForm);
     }
   }, [id]);
+
+  const { userData } = useContext(AppContext);
+  useEffect(() => {
+    if (userData.data) {
+      const permissions = userData.data.role.permissions.business;
+      if ((!permissions.create && type === 'edit') || (!permissions.read && type === 'view') || (!permissions.update && type === 'edit' && id)) {
+        Swal.fire({
+          title: 'Acesso negado',
+          text: 'Você não tem permissão para acessar esta página.',
+          icon: 'error',
+        }).then(() => {
+          navigate(-1);
+        });
+      }
+    }
+  }, [userData]);
 
   if(id && isLoading) {
     return (
